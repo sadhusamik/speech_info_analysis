@@ -87,7 +87,7 @@ if [ -f $segment ]; then
 
   $cmd --mem 5G JOB=1:$nj \
   $log_dir/feats_${name}.JOB.log \
-  python ${src_dir}/featgen/computeMelSpectrum.py \
+  python compute_mel_spectrogram.py \
     $log_dir/segments.JOB \
     $feat_dir/melspec_${name}.JOB \
     $add_opts \
@@ -132,7 +132,7 @@ elif [ -f $scp ]; then
 
     $cmd --mem 5G JOB=1:$nj \
       $log_dir/feats_${name}.JOB.log \
-      python ${src_dir}/featgen/computeMelSpectrum.py \
+      python compute_mel_spectrogram.py \
         $log_dir/wav_${name}.JOB.scp \
         $feat_dir/melspec_${name}.JOB \
         $add_opts \
