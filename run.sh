@@ -21,8 +21,8 @@ if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
     echo "stage 1: Feature Generation"
     make_melspectrogram_feats.sh --cmd "$train_cmd" --nj $nj \
       --conf_file ${feat_conf} \
-        ${data_dir} ${fbankdir}
-    utils/fix_data_dir.sh ${data_dir}
+        ${data_dir} ${fbankdir} || exit 1;
+    utils/fix_data_dir.sh ${data_dir} || exit 1;
 fi
 
 if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
