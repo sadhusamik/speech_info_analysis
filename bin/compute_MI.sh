@@ -34,7 +34,7 @@ if ! $only_combine; then
   ## Divide the data and compute MI for each part
   $cmd --mem 2G JOB=1 \
     $log_dir/getminmax.JOB.log \
-     python3 compute_minmax.py \
+     compute_minmax.py \
      $scp \
      $ali_dir \
      $out_dir/minmax \
@@ -49,7 +49,7 @@ if ! $only_combine; then
 
   $cmd --mem 2G JOB=1:$nj \
     $log_dir/compute_MI.JOB.log \
-    python3 compute_signal_label_confusion_matrix.py \
+    compute_signal_label_confusion_matrix.py \
       $log_dir/feats.JOB.scp \
       $ali_dir \
       $out_dir/minmax.ali.mnx \
@@ -62,5 +62,5 @@ fi
 
 $cmd --mem 2G JOB=1 \
   $log_dir/combine_histogram_dumps.JOB.log \
-  python3 combine_histogram_dumps.py \
+  combine_histogram_dumps.py \
     $out_dir || exit 1;
