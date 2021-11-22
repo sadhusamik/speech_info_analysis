@@ -38,25 +38,30 @@ def get_signal_label_joint_distribution(alis, feats, minmax_ali, minmax_feat, fe
     dist = np.zeros((feat_dim, num_bins, mx_a))
     nums = len(list(feats.keys()))
     count = 0
+    absent_keys = 0
     for key in feats:
         count += 1
         print('Processing {:f} % of files'.format(count * 100 / nums))
         # print('min_ali={:d} and max_ali={:d}'.format(np.min(alis[key]), np.max(alis[key])))
         # print('min_f={:f} and max_f={:f}'.format(np.min(feats[key]), np.max(feats[key])))
-        for idx, label in enumerate(alis[key]):
-            f = feats[key][idx, :]
-            for r in range(feat_dim):
-                ii = int(bisect.bisect_left(sig_bins, f[r]))
-                jj = label - 1
-                # print('mn_f={:f} and mx_f={:f}'.format(mn_f, mx_f))
-                # print('ii={:d} and jj={:d}'.format(ii,jj))
-                if ii == 0:
-                    ii = 1
-                if ii == num_bins + 1:
-                    ii = num_bins
-                ii = ii - 1
-                dist[r, ii, jj] += 1
+        if key in alis:
+            for idx, label in enumerate(alis[key]):
+                f = feats[key][idx, :]
+                for r in range(feat_dim):
+                    ii = int(bisect.bisect_left(sig_bins, f[r]))
+                    jj = label - 1
+                    # print('mn_f={:f} and mx_f={:f}'.format(mn_f, mx_f))
+                    # print('ii={:d} and jj={:d}'.format(ii,jj))
+                    if ii == 0:
+                        ii = 1
+                    if ii == num_bins + 1:
+                        ii = num_bins
+                    ii = ii - 1
+                    dist[r, ii, jj] += 1
+        else:
+            absent_keys += 1
 
+    print('{:d}/{:d} number of keys were absent in the alignment dictionary'.format(absent_keys, nums))
     return dist
 
 
