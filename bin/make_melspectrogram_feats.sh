@@ -96,8 +96,6 @@ if [ -f $segment ]; then
     --nfilters=$nfilters \
     --nfft=$nfft \
     --fduration=$fduration \
-    --add_noise=$add_noise \
-    --add_reverb=$add_reverb \
     --fbank_type=$fbank_type \
     --frate=$frate  || exit 1
 
@@ -140,8 +138,6 @@ elif [ -f $scp ]; then
         --nfilters=$nfilters \
         --nfft=$nfft \
         --fduration=$fduration \
-        --add_noise=$add_noise \
-        --add_reverb=$add_reverb \
         --fbank_type=$fbank_type \
         --frate=$frate  || exit 1
 
