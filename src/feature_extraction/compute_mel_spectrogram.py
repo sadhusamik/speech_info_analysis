@@ -6,7 +6,7 @@ Author: samiksadhu, Johns Hopkins University
 """
 
 import numpy as np
-from utils import getFrames, createFbank, createFbankCochlear, createLinearFbank,  get_kaldi_ark
+from utils import getFrames, createFbank, createFbankCochlear, createLinearFbank, createHearingFbank, get_kaldi_ark
 from scipy.fftpack import fft
 from scipy.io.wavfile import read
 import subprocess
@@ -26,7 +26,7 @@ def get_args():
     parser.add_argument('--frate', type=int, default=100, help='Frame rate (100 Hz)')
     parser.add_argument('--nfft', type=int, default=1024, help='Number of points of computing FFT')
     parser.add_argument('--fbank_type', type=str, default='mel,1',
-                        help='mel,warp_fact OR cochlear,om_w,alpa,fixed,beta,warp_fact, OR uniform')
+                        help='mel,warp_fact OR cochlear,om_w,alpa,fixed,beta,warp_fact, OR uniform OR hearing')
     parser.add_argument("--write_utt2num_frames", action="store_true", help="Set to write utt2num_frames")
 
     return parser.parse_args()
@@ -58,6 +58,8 @@ def compute_mel_spectrum(args, srate=16000,
                                     warp_fact=float(fbank_type[5]))
     elif fbank_type[0] == "uniform":
         fbank = createLinearFbank(nfilters, nfft, srate)
+    elif fbank_type[0] == "hearing":
+        fbank = createHearingFbank(nfilters, nfft, srate)
     else:
         raise ValueError('Invalid type of filter bank, use mel or cochlear with proper configuration')
 

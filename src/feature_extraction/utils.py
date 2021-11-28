@@ -189,6 +189,24 @@ def createFbank(nfilters, nfft, srate, warp_fact=1):
 
     return mel_filts
 
+def createHearingFbank(nfilters, nfft, srate):
+
+    hz_points = np.asarray([250, 375, 505, 654, 795, 995, 1130, 1315, 1515, 1720, 1930, 2140, 2355, 2600, 2900, 3255, 3680, 4200, 4860, 5720, 7000])
+    bin = np.floor((nfft + 1) * hz_points / srate)
+    mel_filts = np.zeros((nfilters, int(np.floor(nfft / 2 + 1))))
+
+    for m in range(1, nfilters + 1):
+        f_m_minus = int(bin[m - 1])  # left
+        f_m = int(bin[m])  # center
+        f_m_plus = int(bin[m + 1])  # right
+
+        for k in range(f_m_minus, f_m):
+            mel_filts[m - 1, k] = 1
+        for k in range(f_m, f_m_plus):
+            mel_filts[m - 1, k] = 1
+
+    return mel_filts
+
 def createLinearFbank(nfilters, nfft, srate):
 
     mel_filts = np.zeros((nfilters, int(np.floor(nfft / 2 + 1))))
