@@ -59,7 +59,7 @@ def compute_mel_spectrum(args, srate=16000,
     elif fbank_type[0] == "uniform":
         fbank = createLinearFbank(nfilters, nfft, srate)
     elif fbank_type[0] == "hearing":
-        fbank = createHearingFbank(nfilters, nfft, srate)
+        fbank = createHearingFbank(nfft, srate)
     else:
         raise ValueError('Invalid type of filter bank, use mel or cochlear with proper configuration')
 
