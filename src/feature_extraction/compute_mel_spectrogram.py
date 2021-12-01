@@ -27,6 +27,7 @@ def get_args():
     parser.add_argument('--nfft', type=int, default=1024, help='Number of points of computing FFT')
     parser.add_argument('--fbank_type', type=str, default='mel,1',
                         help='mel,warp_fact OR cochlear,om_w,alpa,fixed,beta,warp_fact, OR uniform OR hearing')
+    parser.add_argument('--derivative', action='store_true', help='Set to compute derivative of the signal')
     parser.add_argument("--write_utt2num_frames", action="store_true", help="Set to write utt2num_frames")
 
     return parser.parse_args()
@@ -103,6 +104,8 @@ def compute_mel_spectrum(args, srate=16000,
             else:
                 raise ValueError('Invalid type of scp type, it should be either wav or segment')
             # signal = signal / np.power(2, 15)
+            if args.derivative:
+                signal = np.diff(signal)
 
             if not skip_rest:
 

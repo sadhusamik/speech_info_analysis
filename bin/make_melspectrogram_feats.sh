@@ -19,6 +19,8 @@ add_reverb=clean
 fbank_type="mel,1"
 write_utt2num_frames=false
 check_for_segment="data/train" # Check this data directory for pre-computed segment files
+derivative_signal=false
+
 conf_file=
 
 . parse_options.sh || exit 1;
@@ -47,6 +49,10 @@ log_dir=`realpath ${log_dir}`
 
 if $write_utt2num_frames; then
     add_opts="$add_opts --write_utt2num_frames"
+fi
+
+if $derivative_signal; then
+    add_opts="$add_opts --derivative"
 fi
 
 # split files
