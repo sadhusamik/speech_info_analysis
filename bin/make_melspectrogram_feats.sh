@@ -47,11 +47,12 @@ log_dir=$data_dir/log
 mkdir -p $log_dir
 log_dir=`realpath ${log_dir}`
 
-if $write_utt2num_frames; then
+if ${write_utt2num_frames}; then
     add_opts="$add_opts --write_utt2num_frames"
 fi
 
-if $derivative_signal; then
+if ${derivative_signal}; then
+    echo "Using derivative signal"
     add_opts="$add_opts --derivative"
 fi
 

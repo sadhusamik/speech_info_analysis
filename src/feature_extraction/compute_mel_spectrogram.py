@@ -103,7 +103,7 @@ def compute_mel_spectrum(args, srate=16000,
                     skip_rest = True
             else:
                 raise ValueError('Invalid type of scp type, it should be either wav or segment')
-            # signal = signal / np.power(2, 15)
+            #signal = signal / np.power(2, 15)
             if args.derivative:
                 signal = np.diff(signal)
 
