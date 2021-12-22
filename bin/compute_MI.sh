@@ -20,11 +20,16 @@ if [ ! -z ${conf_file} ] ; then
 fi
 
 name=`basename $data_dir`
-scp=$data_dir/feats.scp
-segment=$data_dir/segments
+
+for file in `ls ${data_dir}/*.scp`; do
+  cat ${file} || exit 1;
+done > $data_dir/all_feats
+
+scp=$data_dir/all_feats
 log_dir=$data_dir/log
 mkdir -p $log_dir
 mkdir -p $out_dir
+log_dir=`realpath ${log_dir}`
 feat_size=`feat-to-dim scp:$scp -`
 add_opts=""
 if $analyze_transitions; then 

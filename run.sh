@@ -29,5 +29,6 @@ if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
 
     echo "stage 1: Compute Mutual Information"
     compute_MI.sh --cmd "$train_cmd" --nj $nj \
-      --conf_file ${data_conf} || exit 1;
+      --conf_file ${data_conf} \
+      $fbankdir || exit 1;
 fi
