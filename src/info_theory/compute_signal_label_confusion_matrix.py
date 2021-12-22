@@ -29,13 +29,15 @@ def get_minmax(feat_dict):
     return feat_min, feat_max
 
 
-def get_signal_label_joint_distribution(alis, feats, minmax_ali, minmax_feat, feat_dim=80, num_bins=100):
+def get_signal_label_joint_distribution(alis, feats, minmax_ali, minmax_feat, shifts, feat_dim=80, num_bins=100):
+    shifts = [int(x) for x in shifts.split(',')]
+    num_shifts = len(shifts)
     mnx_a = pkl.load(open(minmax_ali, 'rb'))
     mnx_f = pkl.load(open(minmax_feat, 'rb'))
     mn_a, mx_a = mnx_a['min'], mnx_a['max']
     mn_f, mx_f = mnx_f['min'], mnx_f['max']
     sig_bins = np.linspace(mn_f, mx_f, num_bins + 1)
-    dist = np.zeros((feat_dim, num_bins, mx_a))
+    dist = np.zeros((num_shifts, feat_dim, num_bins, mx_a))
     nums = len(list(feats.keys()))
     count = 0
     absent_keys = 0
@@ -45,19 +47,21 @@ def get_signal_label_joint_distribution(alis, feats, minmax_ali, minmax_feat, fe
         # print('min_ali={:d} and max_ali={:d}'.format(np.min(alis[key]), np.max(alis[key])))
         # print('min_f={:f} and max_f={:f}'.format(np.min(feats[key]), np.max(feats[key])))
         if key in alis:
-            for idx, label in enumerate(alis[key]):
-                f = feats[key][idx, :]
-                for r in range(feat_dim):
-                    ii = int(bisect.bisect_left(sig_bins, f[r]))
-                    jj = label - 1
-                    # print('mn_f={:f} and mx_f={:f}'.format(mn_f, mx_f))
-                    # print('ii={:d} and jj={:d}'.format(ii,jj))
-                    if ii == 0:
-                        ii = 1
-                    if ii == num_bins + 1:
-                        ii = num_bins
-                    ii = ii - 1
-                    dist[r, ii, jj] += 1
+            for sh_idx, sh in enumerate(shifts):
+                one_feat = np.roll(feats[key], shift=sh, axis=0)
+                for idx, label in enumerate(alis[key]):
+                    f = one_feat[idx, :]
+                    for r in range(feat_dim):
+                        ii = int(bisect.bisect_left(sig_bins, f[r]))
+                        jj = label - 1
+                        # print('mn_f={:f} and mx_f={:f}'.format(mn_f, mx_f))
+                        # print('ii={:d} and jj={:d}'.format(ii,jj))
+                        if ii == 0:
+                            ii = 1
+                        if ii == num_bins + 1:
+                            ii = num_bins
+                        ii = ii - 1
+                        dist[sh_idx, r, ii, jj] += 1
         else:
             absent_keys += 1
 
@@ -139,6 +143,8 @@ if __name__ == '__main__':
     parser.add_argument('out_file', help='Output file')
     parser.add_argument("--feat_size", type=int, default=80, help="Feature size")
     parser.add_argument("--analyze_transitions", action="store_true", help="Set to compute MI at transitions")
+    parser.add_argument("--feat_shifts", type=str, default='0',
+                        help="Shift features along time axis along these dimension eg. '-1,0,1'")
     args = parser.parse_args()
 
     all_alis = get_phoneme_labels(args.phoneme_ali_dir)
