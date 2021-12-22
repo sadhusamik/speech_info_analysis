@@ -143,7 +143,7 @@ if __name__ == '__main__':
     parser.add_argument('out_file', help='Output file')
     parser.add_argument("--feat_size", type=int, default=80, help="Feature size")
     parser.add_argument("--analyze_transitions", action="store_true", help="Set to compute MI at transitions")
-    parser.add_argument("--feat_shifts", type=str, default='0',
+    parser.add_argument("--shifts", type=str, default='0',
                         help="Shift features along time axis along these dimension eg. '-1,0,1'")
     args = parser.parse_args()
 
@@ -156,6 +156,6 @@ if __name__ == '__main__':
         dist = get_signal_trans_joint_distribution(all_alis, feats, args.minmax_ali, args.minmax_feat,
                                                    feat_dim=args.feat_size, num_bins=100)
     else:
-        dist = get_signal_label_joint_distribution(all_alis, feats, args.minmax_ali, args.minmax_feat,
+        dist = get_signal_label_joint_distribution(all_alis, feats, args.minmax_ali, args.minmax_feat, args.shifts,
                                                    feat_dim=args.feat_size, num_bins=100)
     pkl.dump(dist, open(args.out_file + '.pkl', 'wb'))

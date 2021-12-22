@@ -6,6 +6,7 @@ nj=20
 cmd="queue.pl"
 analyze_transitions=false
 only_combine=false
+shifts='0'
 conf_file=
 
 . parse_options.sh || exit 1;
@@ -55,7 +56,8 @@ if ! $only_combine; then
       $out_dir/minmax.ali.mnx \
       $out_dir/minmax.feat.mnx \
       $out_dir/MI_${name}.JOB $add_opts \
-      --feat_size=$feat_size || exit 1 ;
+      --feat_size=$feat_size \
+      --shifts=$shifts|| exit 1 ;
 fi
 
 # Combine all the MI data
