@@ -7,7 +7,7 @@ export PATH=$PWD/bin:$PATH
 # Add python binaries
 export PATH=$PWD/src/feature_extraction:$PWD/src/info_theory:$PATH
 # Add kaldi_io files to pythonpath
-export PYTHONPATH=$PWD/tools/kaldi-io-for-python:$PWD/src/feature_extraction:$PYTHONPATH
+export PYTHONPATH=$PWD/tools/kaldi-io-for-python:$PWD/src/feature_extraction:$PWD/tools/fdlp_spectrogram:$PYTHONPATH
 
 
 
