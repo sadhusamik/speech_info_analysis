@@ -48,7 +48,7 @@ def compute_modulations(args):
                 fduration=args.fduration, frate=args.frate, overlap_fraction=args.overlap_fraction,
                 lifter_file=args.lifter_file, lfr=args.lfr, return_mvector=args.return_mvector, srate=args.srate)
 
-    with open(args.wavs, 'r') as fid:
+    with open(args.scp, 'r') as fid:
 
         all_feats = {}
         if args.write_utt2num_frames:
