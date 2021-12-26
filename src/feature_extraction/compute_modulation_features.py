@@ -6,8 +6,7 @@ Author: samiksadhu, Johns Hopkins University
 """
 
 import numpy as np
-from utils import getFrames, createFbank, createFbankCochlear, createLinearFbank, createHearingFbank, get_kaldi_ark
-from scipy.fftpack import fft
+from utils import get_kaldi_ark
 from scipy.io.wavfile import read
 import subprocess
 import argparse
@@ -48,7 +47,6 @@ def compute_modulations(args):
     fdlp = fdlp(n_filters=args.n_filters, coeff_num=args.coeff_num, coeff_range=args.coeff_range, order=args.order,
                 fduration=args.fduration, frate=args.frate, overlap_fraction=args.overlap_fraction,
                 lifter_file=args.lifter_file, lfr=args.lfr, return_mvector=args.return_mvector, srate=args.srate)
-
 
     with open(args.wavs, 'r') as fid:
 
@@ -94,7 +92,7 @@ def compute_modulations(args):
                 signal = np.diff(signal)
 
             if not skip_rest:
-                feats, _=fdlp.extract_feats(signal)
+                feats, _ = fdlp.extract_feats(signal)
 
                 all_feats[uttid] = feats
                 if args.write_utt2num_frames:
