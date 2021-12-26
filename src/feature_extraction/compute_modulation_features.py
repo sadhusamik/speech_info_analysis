@@ -44,9 +44,10 @@ def get_args():
 
 def compute_modulations(args):
     # Define FDLP class
-    feat_model = fdlp(n_filters=args.n_filters, coeff_num=args.coeff_num, coeff_range=args.coeff_range, order=args.order,
-                fduration=args.fduration, frate=args.frate, overlap_fraction=args.overlap_fraction,
-                lifter_file=args.lifter_file, lfr=args.lfr, return_mvector=args.return_mvector, srate=args.srate)
+    feat_model = fdlp(n_filters=args.n_filters, coeff_num=args.coeff_num, coeff_range=args.coeff_range,
+                      order=args.order,
+                      fduration=args.fduration, frate=args.frate, overlap_fraction=args.overlap_fraction,
+                      lifter_file=args.lifter_file, lfr=args.lfr, return_mvector=args.return_mvector, srate=args.srate)
 
     with open(args.scp, 'r') as fid:
 
@@ -92,7 +93,7 @@ def compute_modulations(args):
                 signal = np.diff(signal)
 
             if not skip_rest:
-                feats, _ = feat_model.extract_feats(signal)
+                feats, _ = feat_model.extract_feats(signal[np.newaxis, :])
 
                 all_feats[uttid] = feats
                 all_feats[uttid] = feats
