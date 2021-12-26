@@ -16,7 +16,7 @@ feat_binary=make_melspectrogram_feats.sh  # make_modulation_feats.sh
 . $data_conf || exit 1;
 . $feat_conf || exit 1;
 
-if [ ! -z ${append_name} ] ; then
+if [ -z ${append_name} ] ; then
   append_name=`basename ${feat_conf} | cut -d '.' -f1`
 fi
 
