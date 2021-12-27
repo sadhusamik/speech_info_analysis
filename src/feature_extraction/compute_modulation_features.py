@@ -94,8 +94,7 @@ def compute_modulations(args):
 
             if not skip_rest:
                 feats, _ = feat_model.extract_feats(signal[np.newaxis, :])
-
-                all_feats[uttid] = feats
+                feats = feats[0]
                 all_feats[uttid] = feats
                 if args.write_utt2num_frames:
                     all_lens[uttid] = feats.shape[0]
