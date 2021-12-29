@@ -69,7 +69,7 @@ done
 
 utils/split_scp.pl $scp $split_scp || exit 1;
 
-echo "$0: Computing Mel Spectral features for scp files..."
+echo "$0: Computing modulation features for scp files..."
 
 # Compute mel spectrum features
 
@@ -93,7 +93,7 @@ echo "$0: Computing Mel Spectral features for scp files..."
   # concatenate all scp files together
 
   for n in $(seq $nj); do
-    cat $feat_dir/melspec_$name.$n.scp || exit 1;
+    cat $feat_dir/modspec_$name.$n.scp || exit 1;
   done > $data_dir/feats.scp
 
   rm $log_dir/wav_${name}.*.scp
@@ -101,7 +101,7 @@ echo "$0: Computing Mel Spectral features for scp files..."
   # concatenate all length files together
   if $write_utt2num_frames; then
       for n in $(seq $nj); do
-        cat $feat_dir/melspec_$name.$n.len || exit 1;
+        cat $feat_dir/modspec_$name.$n.len || exit 1;
       done > $data_dir/utt2num_frames
   fi
 
