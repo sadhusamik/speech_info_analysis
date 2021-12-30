@@ -38,7 +38,7 @@ fi
 
 if ! $only_combine; then
   ## Divide the data and compute MI for each part
-  $cmd --mem 2G JOB=1 \
+  $cmd JOB=1 \
     $log_dir/getminmax.JOB.log \
      compute_minmax.py \
      $scp \
