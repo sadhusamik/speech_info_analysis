@@ -36,16 +36,25 @@ def get_feats(feat_scp):
     return {uttid: feats for uttid, feats in kaldi_io.read_mat_scp(feat_scp)}
 
 
-def get_minmax(feat_dict):
+def get_minmax(dict_or_scp, scp_input=False):
     feat_min = +np.inf
     feat_max = -np.inf
-    for key in feat_dict:
-        one_max = np.max(feat_dict[key])
-        one_min = np.min(feat_dict[key])
-        if one_max > feat_max:
-            feat_max = one_max
-        if one_min < feat_min:
-            feat_min = one_min
+    if scp_input:
+        for _, feats in kaldi_io.read_mat_scp(dict_or_scp):
+            one_max = np.max(feats)
+            one_min = np.min(feats)
+            if one_max > feat_max:
+                feat_max = one_max
+            if one_min < feat_min:
+                feat_min = one_min
+    else:
+        for key in dict_or_scp:
+            one_max = np.max(dict_or_scp[key])
+            one_min = np.min(dict_or_scp[key])
+            if one_max > feat_max:
+                feat_max = one_max
+            if one_min < feat_min:
+                feat_min = one_min
 
     return feat_min, feat_max
 
@@ -59,10 +68,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     all_alis = get_phoneme_labels(args.phoneme_ali_dir)
-    feats = get_feats(args.scp)
 
-    mn_a, mx_a = get_minmax(all_alis)
-    mn_f, mx_f = get_minmax(feats)
+    mn_a, mx_a = get_minmax(dict_or_scp=all_alis)
+    mn_f, mx_f = get_minmax(dict_or_scp=args.scp, scp_input=True)
 
     pkl.dump({'min': mn_a, 'max': mx_a}, open(args.out_file + '.ali.mnx', 'wb'))
     pkl.dump({'min': mn_f, 'max': mx_f}, open(args.out_file + '.feat.mnx', 'wb'))
