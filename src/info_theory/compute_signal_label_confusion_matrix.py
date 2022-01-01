@@ -29,7 +29,7 @@ def get_minmax(feat_dict):
     return feat_min, feat_max
 
 
-def get_signal_label_joint_distribution(alis, feats, minmax_ali, minmax_feat, shifts, feat_dim=80, num_bins=100):
+def get_signal_label_joint_distribution(alis, feat_scp, minmax_ali, minmax_feat, shifts, feat_dim=80, num_bins=100):
     shifts = [int(x) for x in shifts.split(',')]
     num_shifts = len(shifts)
     mnx_a = pkl.load(open(minmax_ali, 'rb'))
@@ -38,24 +38,23 @@ def get_signal_label_joint_distribution(alis, feats, minmax_ali, minmax_feat, sh
     mn_f, mx_f = mnx_f['min'], mnx_f['max']
     sig_bins = np.linspace(mn_f, mx_f, num_bins + 1)
     dist = np.zeros((num_shifts, feat_dim, num_bins, mx_a))
-    nums = len(list(feats.keys()))
+    cc = 0
+    for uttid, feats in kaldi_io.read_mat_scp(feat_scp):
+        cc += 1
+    nums = cc
     count = 0
     absent_keys = 0
-    for key in feats:
+    for key, feats in kaldi_io.read_mat_scp(feat_scp):
         count += 1
         print('Processing {:f} % of files'.format(count * 100 / nums))
-        # print('min_ali={:d} and max_ali={:d}'.format(np.min(alis[key]), np.max(alis[key])))
-        # print('min_f={:f} and max_f={:f}'.format(np.min(feats[key]), np.max(feats[key])))
         if key in alis:
             for sh_idx, sh in enumerate(shifts):
-                one_feat = np.roll(feats[key], shift=sh, axis=0)
+                one_feat = np.roll(feats, shift=sh, axis=0)
                 for idx, label in enumerate(alis[key]):
                     f = one_feat[idx, :]
                     for r in range(feat_dim):
                         ii = int(bisect.bisect_left(sig_bins, f[r]))
                         jj = label - 1
-                        # print('mn_f={:f} and mx_f={:f}'.format(mn_f, mx_f))
-                        # print('ii={:d} and jj={:d}'.format(ii,jj))
                         if ii == 0:
                             ii = 1
                         if ii == num_bins + 1:
@@ -150,12 +149,11 @@ if __name__ == '__main__':
     all_alis = get_phoneme_labels(args.phoneme_ali_dir)
     if args.analyze_transitions:
         all_alis = get_transitions(all_alis)
-    feats = get_feats(args.scp)
 
     if args.analyze_transitions:
-        dist = get_signal_trans_joint_distribution(all_alis, feats, args.minmax_ali, args.minmax_feat,
+        dist = get_signal_trans_joint_distribution(all_alis, args.scp, args.minmax_ali, args.minmax_feat,
                                                    feat_dim=args.feat_size, num_bins=100)
     else:
-        dist = get_signal_label_joint_distribution(all_alis, feats, args.minmax_ali, args.minmax_feat, args.shifts,
+        dist = get_signal_label_joint_distribution(all_alis, args.scp, args.minmax_ali, args.minmax_feat, args.shifts,
                                                    feat_dim=args.feat_size, num_bins=100)
     pkl.dump(dist, open(args.out_file + '.pkl', 'wb'))

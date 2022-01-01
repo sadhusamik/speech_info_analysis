@@ -53,7 +53,7 @@ if ! $only_combine; then
 
   utils/split_scp.pl $scp $split_scp || exit 1;
 
-  $cmd --mem 2G JOB=1:$nj \
+  $cmd --mem 10G JOB=1:$nj \
     $log_dir/compute_MI.JOB.log \
     compute_signal_label_confusion_matrix.py \
       $log_dir/feats.JOB.scp \
