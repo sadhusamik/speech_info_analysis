@@ -33,6 +33,8 @@ def get_args():
                         help='Features are computed at this rate it return_mvector=True then interpolated to frate')
     parser.add_argument('--return_mvector', type=bool, default=False,
                         help='Set to return M-vector instead of FDLP-spectograms')
+    parser.add_argument('--no_window', type=bool, default=False,
+                        help='Set to use rectangular windows over time')
     parser.add_argument('--srate', type=int, default=16000, help='Sampling rate of the signal')
     parser.add_argument('--fbank_type', type=str, default='mel,1',
                         help='mel,warp_fact OR cochlear,om_w,alpa,fixed,beta,warp_fact, OR uniform OR hearing')
@@ -47,7 +49,8 @@ def compute_modulations(args):
     feat_model = fdlp(n_filters=args.n_filters, coeff_num=args.coeff_num, coeff_range=args.coeff_range,
                       order=args.order,
                       fduration=args.fduration, frate=args.frate, overlap_fraction=args.overlap_fraction,
-                      lifter_file=args.lifter_file, lfr=args.lfr, return_mvector=args.return_mvector, srate=args.srate)
+                      lifter_file=args.lifter_file, lfr=args.lfr, return_mvector=args.return_mvector,
+                      no_window=args.no_window, srate=args.srate)
 
     with open(args.scp, 'r') as fid:
 
