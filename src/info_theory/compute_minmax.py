@@ -36,11 +36,13 @@ def get_feats(feat_scp):
     return {uttid: feats for uttid, feats in kaldi_io.read_mat_scp(feat_scp)}
 
 
-def get_minmax(dict_or_scp, scp_input=False):
+def get_minmax(dict_or_scp, scp_input=False, make_absolute=False):
     feat_min = +np.inf
     feat_max = -np.inf
     if scp_input:
         for _, feats in kaldi_io.read_mat_scp(dict_or_scp):
+            if make_absolute:
+                feats = np.abs(feats)
             one_max = np.max(feats)
             one_min = np.min(feats)
             if one_max > feat_max:
@@ -49,6 +51,8 @@ def get_minmax(dict_or_scp, scp_input=False):
                 feat_min = one_min
     else:
         for key in dict_or_scp:
+            if make_absolute:
+                dict_or_scp[key] = np.abs(dict_or_scp[key])
             one_max = np.max(dict_or_scp[key])
             one_min = np.min(dict_or_scp[key])
             if one_max > feat_max:
@@ -65,12 +69,14 @@ if __name__ == '__main__':
     parser.add_argument('phoneme_ali_dir', help='Phoneme alignment directory')
     parser.add_argument('out_file', help='Output file')
     parser.add_argument("--feat_size", type=int, default=80, help="Feature size")
+    parser.add_argument("--make_absolute", type=bool, default=False,
+                        help="Compute np.abs() on features before computing MI")
     args = parser.parse_args()
 
     all_alis = get_phoneme_labels(args.phoneme_ali_dir)
 
     mn_a, mx_a = get_minmax(dict_or_scp=all_alis)
-    mn_f, mx_f = get_minmax(dict_or_scp=args.scp, scp_input=True)
+    mn_f, mx_f = get_minmax(dict_or_scp=args.scp, scp_input=True, make_absolute=args.make_absolute)
 
     pkl.dump({'min': mn_a, 'max': mx_a}, open(args.out_file + '.ali.mnx', 'wb'))
     pkl.dump({'min': mn_f, 'max': mx_f}, open(args.out_file + '.feat.mnx', 'wb'))

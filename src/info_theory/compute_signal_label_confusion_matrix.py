@@ -29,7 +29,8 @@ def get_minmax(feat_dict):
     return feat_min, feat_max
 
 
-def get_signal_label_joint_distribution(alis, feat_scp, minmax_ali, minmax_feat, shifts, feat_dim=80, num_bins=100):
+def get_signal_label_joint_distribution(alis, feat_scp, minmax_ali, minmax_feat, shifts, feat_dim=80, num_bins=100,
+                                        make_absolute=False):
     shifts = [int(x) for x in shifts.split(',')]
     num_shifts = len(shifts)
     mnx_a = pkl.load(open(minmax_ali, 'rb'))
@@ -46,6 +47,8 @@ def get_signal_label_joint_distribution(alis, feat_scp, minmax_ali, minmax_feat,
     absent_keys = 0
     for key, feats in kaldi_io.read_mat_scp(feat_scp):
         count += 1
+        if make_absolute:
+            feats = np.abs(feats)
         print('Processing {:f} % of files'.format(count * 100 / nums))
         if key in alis:
             for sh_idx, sh in enumerate(shifts):
@@ -141,6 +144,8 @@ if __name__ == '__main__':
     parser.add_argument('minmax_feat', help='Feature minmax file')
     parser.add_argument('out_file', help='Output file')
     parser.add_argument("--feat_size", type=int, default=80, help="Feature size")
+    parser.add_argument("--make_absolute", type=bool, default=False,
+                        help="Compute np.abs() on features before computing MI")
     parser.add_argument("--analyze_transitions", action="store_true", help="Set to compute MI at transitions")
     parser.add_argument("--shifts", type=str, default='0',
                         help="Shift features along time axis along these dimension eg. '-1,0,1'")
@@ -155,5 +160,5 @@ if __name__ == '__main__':
                                                    feat_dim=args.feat_size, num_bins=100)
     else:
         dist = get_signal_label_joint_distribution(all_alis, args.scp, args.minmax_ali, args.minmax_feat, args.shifts,
-                                                   feat_dim=args.feat_size, num_bins=100)
+                                                   feat_dim=args.feat_size, num_bins=100, make_absolute=args.make_absolute)
     pkl.dump(dist, open(args.out_file + '.pkl', 'wb'))
