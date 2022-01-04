@@ -46,7 +46,8 @@ if ! $only_combine; then
      $scp \
      $ali_dir \
      $out_dir/minmax \
-     --feat_size=$feat_size || exit 1 ;
+     --feat_size=$feat_size \
+     --make_absolute=True || exit 1 ;
 
   split_scp=""
   for n in $(seq $nj); do
