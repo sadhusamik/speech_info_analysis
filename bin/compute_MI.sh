@@ -26,7 +26,7 @@ for file in `ls ${data_dir}/*.scp`; do
 done > $data_dir/all_feats
 
 scp=$data_dir/all_feats
-log_dir=$data_dir/log
+log_dir=$out_dir/log
 mkdir -p $log_dir
 mkdir -p $out_dir
 log_dir=`realpath ${log_dir}`
@@ -38,6 +38,8 @@ fi
 
 if ! $only_combine; then
   ## Divide the data and compute MI for each part
+  echo "$0: Computing min-max of all features"
+  echo "$0: Log file can be found in $log_dir/getminmax.*.log "
   $cmd --mem 2G JOB=1 \
     $log_dir/getminmax.JOB.log \
      compute_minmax.py \
@@ -52,6 +54,9 @@ if ! $only_combine; then
   done
 
   utils/split_scp.pl $scp $split_scp || exit 1;
+
+  echo "$0: Computing MI"
+  echo "$0: Log file can be found in $log_dir/compute_MI.*.log"
 
   $cmd --mem 10G JOB=1:$nj \
     $log_dir/compute_MI.JOB.log \
