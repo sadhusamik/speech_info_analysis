@@ -8,6 +8,8 @@ analyze_transitions=false
 only_combine=false
 shifts='0'
 conf_file=
+add_opts=""
+find_range=true
 
 . parse_options.sh || exit 1;
 
@@ -31,23 +33,25 @@ mkdir -p $log_dir
 mkdir -p $out_dir
 log_dir=`realpath ${log_dir}`
 feat_size=`feat-to-dim scp:$scp -`
-add_opts=""
+
 if $analyze_transitions; then 
   add_opts="$add_opts --analyze_transitions"
 fi
 
 if ! $only_combine; then
-  ## Divide the data and compute MI for each part
-  echo "$0: Computing min-max of all features"
-  echo "$0: Log file can be found in $log_dir/getminmax.*.log "
-  $cmd --mem 2G JOB=1 \
-    $log_dir/getminmax.JOB.log \
-     compute_minmax.py \
-     $scp \
-     $ali_dir \
-     $out_dir/minmax \
-     --feat_size=$feat_size \
-     --make_absolute=True || exit 1 ;
+  if ${find_range}; then
+    ## Divide the data and compute MI for each part
+    echo "$0: Computing min-max of all features"
+    echo "$0: Log file can be found in $log_dir/getminmax.*.log "
+    $cmd --mem 2G JOB=1 \
+      $log_dir/getminmax.JOB.log \
+       compute_minmax.py \
+       $scp \
+       $ali_dir \
+       $out_dir/minmax \
+       --feat_size=$feat_size \
+       --make_absolute=True || exit 1 ;
+  fi
 
   split_scp=""
   for n in $(seq $nj); do
