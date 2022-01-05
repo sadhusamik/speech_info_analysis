@@ -8,6 +8,7 @@ stage=0
 stop_stage=200
 data_conf=conf/data.conf # Location of the Kaldi generated data directory
 feat_conf=conf/feat_melspec.conf
+MI_conf=conf/MI.conf
 append_name=
 feat_binary=make_melspectrogram_feats.sh  # make_modulation_feats.sh
 
@@ -38,6 +39,7 @@ if [ ${stage} -le 1 ] && [ ${stop_stage} -ge 1 ]; then
 
     echo "stage 1: Compute Mutual Information"
     compute_MI.sh --cmd "$train_cmd" --nj $nj \
+      --conf_file ${MI_conf} \
       $fbankdir \
       ${ali_dir} \
       ${out_dir} || exit 1;
