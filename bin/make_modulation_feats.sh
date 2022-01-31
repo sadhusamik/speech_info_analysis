@@ -14,6 +14,7 @@ overlap_fraction=0.15
 lifter_file=
 lfr=10
 return_mvector=False
+complex_mvectors=False
 srate=16000
 cmd=queue.pl
 add_opts=
@@ -88,6 +89,7 @@ echo "$0: Computing modulation features for scp files..."
       --overlap_fraction=${overlap_fraction} \
       --lfr=$lfr \
       --return_mvector=${return_mvector} \
+      --complex_mvectors=${complex_mvectors} \
       --srate=$srate || exit 1;
 
   # concatenate all scp files together
