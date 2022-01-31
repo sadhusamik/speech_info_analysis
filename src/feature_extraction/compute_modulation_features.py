@@ -33,6 +33,8 @@ def get_args():
                         help='Features are computed at this rate it return_mvector=True then interpolated to frate')
     parser.add_argument('--return_mvector', type=bool, default=False,
                         help='Set to return M-vector instead of FDLP-spectograms')
+    parser.add_argument('--complex_mvectors', type=bool, default=False,
+                        help='Use complex LPC to compute modulations')
     parser.add_argument('--no_window', type=bool, default=False,
                         help='Set to use rectangular windows over time')
     parser.add_argument('--srate', type=int, default=16000, help='Sampling rate of the signal')
@@ -50,7 +52,7 @@ def compute_modulations(args):
                       order=args.order,
                       fduration=args.fduration, frate=args.frate, overlap_fraction=args.overlap_fraction,
                       lifter_file=args.lifter_file, lfr=args.lfr, return_mvector=args.return_mvector,
-                      no_window=args.no_window, srate=args.srate)
+                      complex_mvectors=args.complex_mvectors, no_window=args.no_window, srate=args.srate)
 
     with open(args.scp, 'r') as fid:
 
