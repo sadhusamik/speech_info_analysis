@@ -41,6 +41,8 @@ def get_args():
     parser.add_argument('--fbank_type', type=str, default='mel,1',
                         help='mel,warp_fact OR cochlear,om_w,alpa,fixed,beta,warp_fact, OR uniform OR hearing')
     parser.add_argument('--derivative', action='store_true', help='Set to compute derivative of the signal')
+    parser.add_argument('--normalize_uttwise_variance', type=bool, default=False,
+                        help='Set to perform utterancewise variance normalization')
     parser.add_argument("--write_utt2num_frames", action="store_true", help="Set to write utt2num_frames")
 
     return parser.parse_args()
@@ -49,7 +51,7 @@ def get_args():
 def compute_modulations(args):
     # Define FDLP class
     feat_model = fdlp(n_filters=args.n_filters, coeff_num=args.coeff_num, coeff_range=args.coeff_range,
-                      order=args.order,
+                      order=args.order, normalize_uttwise_variance=args.normalize_uttwise_variance,
                       fduration=args.fduration, frate=args.frate, overlap_fraction=args.overlap_fraction,
                       lifter_file=args.lifter_file, lfr=args.lfr, return_mvector=args.return_mvector,
                       complex_mvectors=args.complex_mvectors, no_window=args.no_window, srate=args.srate)
