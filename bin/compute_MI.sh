@@ -55,7 +55,7 @@ if ! $only_combine; then
        compute_minmax.py \
        $scp \
        $ali_dir \
-       $out_dir/minmax ${add_add_opts_minmax}\
+       $out_dir/minmax ${add_opts_minmax}\
        --feat_size=$feat_size \
        --make_absolute=True || exit 1 ;
   fi

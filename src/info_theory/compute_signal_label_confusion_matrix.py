@@ -13,7 +13,7 @@ import bisect
 import os
 import kaldi_io
 import pickle as pkl
-
+import logging
 
 def get_minmax(feat_dict):
     feat_min = +np.inf
@@ -168,6 +168,9 @@ if __name__ == '__main__':
     all_alis = get_phoneme_labels(args.phoneme_ali_dir)
     if args.analyze_transitions:
         all_alis = get_transitions(all_alis)
+
+    if args.frequency_scaling:
+        logging.info('Frequency scaling activated')
 
     if args.analyze_transitions:
         dist = get_signal_trans_joint_distribution(all_alis, args.scp, args.minmax_ali, args.minmax_feat,
