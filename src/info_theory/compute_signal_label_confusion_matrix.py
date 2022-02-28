@@ -160,7 +160,7 @@ if __name__ == '__main__':
                         help="Compute np.abs() on features before computing MI")
     parser.add_argument("--analyze_transitions", action="store_true", help="Set to compute MI at transitions")
     parser.add_argument("--frequency_scaling", type=str, default=None,
-                        help="If scaling by 1/f you can set this option as num_filters,num_freq_components,freq_resolution")
+                        help="If scaling by 1/f you can set this option as num_filters,num_freq_components,freq_resolution [Option used when computing MI of modulation spectrum]")
     parser.add_argument("--shifts", type=str, default='0',
                         help="Shift features along time axis along these dimension eg. '-1,0,1'")
     args = parser.parse_args()
