@@ -30,9 +30,16 @@ def get_minmax(feat_dict):
 
 
 def get_signal_label_joint_distribution(alis, feat_scp, minmax_ali, minmax_feat, shifts, feat_dim=80, num_bins=100,
-                                        make_absolute=False):
+                                        make_absolute=False, frequency_scaling=None):
     shifts = [int(x) for x in shifts.split(',')]
     num_shifts = len(shifts)
+    if frequency_scaling:
+        frequency_scaling = [x for x in frequency_scaling.split(',')]
+        frequency_scaling[0] = int(frequency_scaling[0])  # num_filters
+        frequency_scaling[1] = int(frequency_scaling[1])  # num_freq
+        frequency_scaling[2] = float(frequency_scaling[2])  # freq_resolution
+        freq_multiplier = np.linspace(0, frequency_scaling[1] * frequency_scaling[2], frequency_scaling[1])
+
     mnx_a = pkl.load(open(minmax_ali, 'rb'))
     mnx_f = pkl.load(open(minmax_feat, 'rb'))
     mn_a, mx_a = mnx_a['min'], mnx_a['max']
@@ -49,6 +56,11 @@ def get_signal_label_joint_distribution(alis, feat_scp, minmax_ali, minmax_feat,
         count += 1
         if make_absolute:
             feats = np.abs(feats)
+        if frequency_scaling:
+            feats = np.reshape(feats, (-1, frequency_scaling[0], frequency_scaling[1]))
+            feats *= freq_multiplier
+            feats = np.reshape(feats, (-1, frequency_scaling[0] * frequency_scaling[1]))
+
         print('Processing {:f} % of files'.format(count * 100 / nums))
         if key in alis:
             for sh_idx, sh in enumerate(shifts):
@@ -147,6 +159,8 @@ if __name__ == '__main__':
     parser.add_argument("--make_absolute", type=bool, default=False,
                         help="Compute np.abs() on features before computing MI")
     parser.add_argument("--analyze_transitions", action="store_true", help="Set to compute MI at transitions")
+    parser.add_argument("--frequency_scaling", type=str, default=None,
+                        help="If scaling by 1/f you can set this option as num_filters,num_freq_components,freq_resolution")
     parser.add_argument("--shifts", type=str, default='0',
                         help="Shift features along time axis along these dimension eg. '-1,0,1'")
     args = parser.parse_args()
@@ -160,5 +174,7 @@ if __name__ == '__main__':
                                                    feat_dim=args.feat_size, num_bins=100)
     else:
         dist = get_signal_label_joint_distribution(all_alis, args.scp, args.minmax_ali, args.minmax_feat, args.shifts,
-                                                   feat_dim=args.feat_size, num_bins=100, make_absolute=args.make_absolute)
+                                                   feat_dim=args.feat_size, num_bins=100,
+                                                   make_absolute=args.make_absolute,
+                                                   frequency_scaling=args.frequency_scaling)
     pkl.dump(dist, open(args.out_file + '.pkl', 'wb'))
