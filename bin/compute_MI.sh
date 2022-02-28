@@ -9,7 +9,9 @@ only_combine=false
 shifts='0'
 conf_file=
 add_opts=""
+add_opts_minmax=""
 find_range=true
+frequency_scaling=
 
 . parse_options.sh || exit 1;
 
@@ -20,6 +22,11 @@ out_dir=$3
 if [ ! -z ${conf_file} ] ; then
   source ${conf_file}
 fi
+
+if [ ! -z ${frequency_scaling} ] ; then
+  add_opts_minmax="${add_opts_minmax} --frequency_scaling=$frequency_scaling"
+fi
+
 
 name=`basename $data_dir`
 
@@ -48,7 +55,7 @@ if ! $only_combine; then
        compute_minmax.py \
        $scp \
        $ali_dir \
-       $out_dir/minmax \
+       $out_dir/minmax ${add_add_opts_minmax}\
        --feat_size=$feat_size \
        --make_absolute=True || exit 1 ;
   fi
