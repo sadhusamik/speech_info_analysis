@@ -56,7 +56,7 @@ $cmd --mem 5G JOB=1:$nj \
     $log_dir/wav_${name}.JOB.scp \
     $feat_dir/avg_spectrum_${name}.JOB.pkl \
     --add_reverb=${add_reverb} \
-    --fduration=fduration \
+    --fduration=${fduration} \
     --overlap_fraction=${overlap_fraction} \
     --srate=16000 || exit 1;
 
