@@ -14,7 +14,7 @@ import sys
 import io
 from fdlp.fdlp import FDLP
 import pickle as pkl
-
+import logging
 
 def get_args():
     parser = argparse.ArgumentParser('Extract Modulation Features (FDLP-spectrogram OR M-vectors)')
@@ -35,10 +35,6 @@ def compute_modulations(args):
     count = 0
     with open(args.scp, 'r') as fid:
 
-        all_feats = {}
-        if args.write_utt2num_frames:
-            all_lens = {}
-
         add_reverb = args.add_reverb
         if add_reverb:
             if add_reverb == 'small_room':
@@ -55,6 +51,7 @@ def compute_modulations(args):
                 raise ValueError('Invalid type of reverberation!')
 
         for line in fid:
+
             tokens = line.strip().split()
             uttid, inwav = tokens[0], ' '.join(tokens[1:])
 
