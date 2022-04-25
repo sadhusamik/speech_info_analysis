@@ -32,6 +32,7 @@ def compute_modulations(args):
     # Define FDLP class
     feat_model = FDLP(fduration=args.fduration, overlap_fraction=args.overlap_fraction, srate=args.srate)
     log_spectrum_acc = np.zeros(int(args.fduration * args.srate))
+    count = 0
     with open(args.scp, 'r') as fid:
 
         all_feats = {}
@@ -94,10 +95,11 @@ def compute_modulations(args):
                 if add_reverb:
                     if not add_reverb == 'clean':
                         signal = addReverb(signal, rir)
-                feats = feat_model.acc_log_spectrum(signal[np.newaxis, :])
+                cc, feats = feat_model.acc_log_spectrum(signal[np.newaxis, :])
                 log_spectrum_acc += feats
+                count += cc
 
-    pkl.dump(log_spectrum_acc, open(args.outfile,'rb'))
+    pkl.dump(log_spectrum_acc / count, open(args.outfile, 'rb'))
 
 
 if __name__ == '__main__':
