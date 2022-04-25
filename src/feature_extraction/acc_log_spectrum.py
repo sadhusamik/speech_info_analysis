@@ -86,8 +86,6 @@ def compute_modulations(args):
             else:
                 raise ValueError('Invalid type of scp type, it should be either wav or segment')
             signal = signal / np.power(2, 15)
-            if args.derivative:
-                signal = np.diff(signal)
 
             if not skip_rest:
                 if add_reverb:
