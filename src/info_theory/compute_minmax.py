@@ -74,7 +74,6 @@ def get_minmax(dict_or_scp, scp_input=False, make_absolute=False, frequency_scal
 
     return feat_min, feat_max
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Compute min-max values of labels and data for binning Histograms')
     parser.add_argument('scp', help='Feature scp file')
