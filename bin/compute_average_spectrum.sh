@@ -6,9 +6,10 @@
 
 nj=100
 cmd=queue.pl
-add_reverb=clean
+add_reverb=large_room
 overlap_fraction=0.5
 fduration=1.5
+srate=16000
 
 . parse_options.sh || exit 1;
 
