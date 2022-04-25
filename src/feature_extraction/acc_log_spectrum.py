@@ -32,7 +32,7 @@ def get_args():
 def compute_modulations(args):
     # Define FDLP class
     feat_model = FDLP(fduration=args.fduration, overlap_fraction=args.overlap_fraction, srate=args.srate)
-    log_spectrum_acc = np.zeros(int(args.fduration * args.srate))
+    log_spectrum_acc = np.zeros(int(args.fduration * args.srate), dtype=np.complex128)
     count = 0
     with open(args.scp, 'r') as fid:
 
