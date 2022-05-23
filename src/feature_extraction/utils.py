@@ -114,6 +114,13 @@ def addReverb(sig, reverb):
     out = out[indM:indM + len(sig)]
     return out
 
+def addReverb_nodistortion(sig, reverb):
+    out = np.convolve(sig, reverb, mode='full')
+    xxc = np.correlate(sig, out, 'valid')
+    indM = len(xxc) - np.argmax(xxc)
+    return out, indM
+
+
 
 def getFrames(signal, srate, frate, flength, window):
     '''Generator of overlapping frames

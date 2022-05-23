@@ -6,7 +6,7 @@ Author: samiksadhu, Johns Hopkins University
 """
 
 import numpy as np
-from utils import get_kaldi_ark, addReverb
+from utils import get_kaldi_ark, addReverb, addReverb_nodistortion
 from scipy.io.wavfile import read
 import subprocess
 import argparse
@@ -15,6 +15,7 @@ import io
 from fdlp.fdlp import FDLP
 import pickle as pkl
 import logging
+
 
 def get_args():
     parser = argparse.ArgumentParser('Extract Modulation Features (FDLP-spectrogram OR M-vectors)')
@@ -25,6 +26,7 @@ def get_args():
     parser.add_argument('--overlap_fraction', type=float, default=0.15, help='Overlap fraction for overlap-add')
     parser.add_argument('--srate', type=int, default=16000, help='Sampling rate of the signal')
     parser.add_argument('--add_reverb', help='input "clean" OR "small_room" OR "large_room"')
+    parser.add_argument('--speech_type', default='clean', type=str, help="'clean' OR 'reverb'")
 
     return parser.parse_args()
 
@@ -32,7 +34,9 @@ def get_args():
 def compute_modulations(args):
     # Define FDLP class
     feat_model = FDLP(fduration=args.fduration, overlap_fraction=args.overlap_fraction, srate=args.srate)
-    log_spectrum_acc = np.zeros(int(args.fduration * args.srate), dtype=np.complex128)
+    # log_spectrum_acc = np.zeros(int(args.fduration * args.srate), dtype=np.complex128)
+    acc_logmag = np.zeros(int(args.fduration * args.srate))
+    acc_phase = np.zeros(int(args.fduration * args.srate))
     count = 0
     with open(args.scp, 'r') as fid:
 
@@ -90,12 +94,21 @@ def compute_modulations(args):
             if not skip_rest:
                 if add_reverb:
                     if not add_reverb == 'clean':
-                        signal = addReverb(signal, rir)
-                cc, feats = feat_model.acc_log_spectrum(signal[np.newaxis, :])
-                log_spectrum_acc += feats
+                        signal_rev, idx_shift = addReverb_nodistortion(signal, rir)
+                    if args.speech_type == 'clean':
+                        signal = np.concatenate([signal, np.zeros(signal_rev.shape[0] - signal.shape[0])])
+                    elif args.speech_type == 'reverb':
+                        signal = signal_rev
+                    else:
+                        raise ValueError("speech_type can only be 'clean' or 'reverb'")
+
+                cc, log_mag, phase = feat_model.acc_log_spectrum(signal[np.newaxis, :])
+                acc_logmag += log_mag
+                acc_phase += phase
+                # acc_phase = (acc_phase + np.pi) % (2 * np.pi) - np.pi
                 count += cc
 
-    pkl.dump(log_spectrum_acc / count, open(args.outfile, 'rb'))
+    pkl.dump({'count': count, 'acc_logmag': acc_logmag, 'acc_phase': acc_phase}, open(args.outfile, 'rb'))
 
 
 if __name__ == '__main__':
