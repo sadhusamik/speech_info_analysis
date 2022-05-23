@@ -18,7 +18,6 @@ feat_binary=compute_average_spectrum.sh  # make_modulation_feats.sh
 . parse_options.sh || exit 1;
 
 . $data_conf || exit 1;
-. $feat_conf || exit 1;
 
 if [ -z ${append_name} ] ; then
   append_name=`basename ${feat_conf} | cut -d '.' -f1`
