@@ -52,7 +52,7 @@ echo "$0: Computing average DST-DCT spectral features for scp files..."
 # Compute mel spectrum features
 
 $cmd --mem 5G JOB=1:$nj \
-  $log_dir/acc_spectrum_${name}.JOB.log \
+  $log_dir/acc_spectrum_${name}_${speech_type}.JOB.log \
   acc_log_spectrum.py \
     $log_dir/wav_${name}.JOB.scp \
     $feat_dir/avg_spectrum_${name}.JOB.pkl \
