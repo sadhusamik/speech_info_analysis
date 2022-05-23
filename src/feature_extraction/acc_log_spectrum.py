@@ -109,7 +109,7 @@ def compute_modulations(args):
                 # acc_phase = (acc_phase + np.pi) % (2 * np.pi) - np.pi
                 count += cc
 
-    pkl.dump({'count': count, 'acc_logmag': acc_logmag, 'acc_phase': acc_phase}, open(args.outfile, 'rb'))
+    pkl.dump({'count': count, 'acc_logmag': acc_logmag, 'acc_phase': acc_phase}, open(args.outfile, 'wb'))
 
 
 if __name__ == '__main__':
