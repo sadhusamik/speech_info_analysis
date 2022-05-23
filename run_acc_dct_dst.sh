@@ -30,7 +30,7 @@ if [ ${stage} -le 0 ] ; then
 
     echo "stage 1: Feature Generation"
     bash ${feat_binary} --cmd "$train_cmd" --nj $nj \
-      --add_reverb 'clean' \
+      --add_reverb ${add_reverb} \
       --overlap_fraction ${overlap_fraction} \
       --fduration ${fduration} \
       --speech_type ${speech_type} \

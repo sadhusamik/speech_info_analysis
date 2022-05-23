@@ -59,6 +59,7 @@ $cmd --mem 5G JOB=1:$nj \
     --add_reverb=${add_reverb} \
     --fduration=${fduration} \
     --overlap_fraction=${overlap_fraction} \
+    --speech_type=${speech_type} \
     --srate=16000 || exit 1;
 
 rm $log_dir/wav_${name}.*.scp
