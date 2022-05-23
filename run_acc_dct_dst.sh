@@ -29,7 +29,7 @@ mkdir -p ${fbankdir}
 if [ ${stage} -le 0 ] ; then
 
     echo "stage 1: Feature Generation"
-    ${feat_binary} --cmd "$train_cmd" --nj $nj \
+    bash ${feat_binary} --cmd "$train_cmd" --nj $nj \
       --add_reverb 'clean' \
       --overlap_fraction ${overlap_fraction} \
       --fduration ${fduration} \
