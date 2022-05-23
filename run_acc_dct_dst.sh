@@ -26,7 +26,7 @@ fi
 fbankdir=feats_dump_dst_dct/fbank_${append_name}
 mkdir -p ${fbankdir}
 
-if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
+if [ ${stage} -le 0 ] ; then
 
     echo "stage 1: Feature Generation"
     ${feat_binary} --cmd "$train_cmd" --nj $nj \
