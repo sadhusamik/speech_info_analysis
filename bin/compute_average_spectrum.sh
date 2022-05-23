@@ -53,7 +53,7 @@ echo "$0: Computing average DST-DCT spectral features for scp files..."
 
 $cmd --mem 5G JOB=1:$nj \
   $log_dir/acc_spectrum_${name}.JOB.log \
-  python3 acc_log_spectrum.py \
+  acc_log_spectrum.py \
     $log_dir/wav_${name}.JOB.scp \
     $feat_dir/avg_spectrum_${name}.JOB.pkl \
     --add_reverb=${add_reverb} \
