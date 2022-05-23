@@ -6,7 +6,7 @@
 nj=50
 stage=0
 
-data_conf=conf/data.conf # Location of the Kaldi generated data directory
+data_conf=conf/data_small.conf # Location of the Kaldi generated data directory
 add_reverb='large_room'
 overlap_fraction=0.5
 fduration=1.5
