@@ -113,6 +113,7 @@ def compute_modulations(args):
                     acc_dct += dct_sum
                     acc_dst += dst_sum
                     count += cc
+                    print('%s:Extracted %d frames for file: %s' % (sys.argv[0], cc, uttid))
 
 
     pkl.dump({'count': count, 'acc_dct': acc_dct, 'acc_dst': acc_dst}, open(args.outfile, 'wb'))
