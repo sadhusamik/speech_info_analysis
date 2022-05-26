@@ -8,11 +8,11 @@ stage=0
 
 data_conf=conf/data_small.conf # Location of the Kaldi generated data directory
 add_reverb='large_room'
-overlap_fraction=0.5
-fduration=1.5
+overlap_fraction=0.75
+fduration=5
 speech_type='clean'
 
-append_name=${speech_type}
+append_name=${speech_type}_fduration${fduration}_of${overlap_fraction}
 feat_binary=compute_average_spectrum.sh  # make_modulation_feats.sh
 
 . parse_options.sh || exit 1;
