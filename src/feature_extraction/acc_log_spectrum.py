@@ -25,6 +25,7 @@ def get_args():
     parser.add_argument('--fduration', type=float, default=0.02, help='Window length (0.02 sec)')
     parser.add_argument('--overlap_fraction', type=float, default=0.15, help='Overlap fraction for overlap-add')
     parser.add_argument('--srate', type=int, default=16000, help='Sampling rate of the signal')
+    parser.add_argument('--append_zero_factor', type=int, default=100, help='expand signal with this factor of zeros')
     parser.add_argument('--add_reverb', help='input "clean" OR "small_room" OR "large_room"')
     parser.add_argument('--speech_type', default='clean', type=str, help="'clean' OR 'reverb'")
 
@@ -34,10 +35,12 @@ def get_args():
 def compute_modulations(args):
     # Define FDLP class
     feat_model = FDLP(fduration=args.fduration, overlap_fraction=args.overlap_fraction, srate=args.srate)
-    # log_spectrum_acc = np.zeros(int(args.fduration * args.srate), dtype=np.complex128)
-    acc_logmag = np.zeros(int(args.fduration * args.srate))
-    acc_phase = np.zeros(int(args.fduration * args.srate))
+
+    N = int(args.fduration * args.srate)
+    acc_dct = np.zeros(N * (args.append_zero_factor + 1))
+    acc_dst = np.zeros(N * (args.append_zero_factor + 1))
     count = 0
+
     with open(args.scp, 'r') as fid:
 
         add_reverb = args.add_reverb
@@ -98,18 +101,19 @@ def compute_modulations(args):
                     if args.speech_type == 'clean':
                         signal = np.concatenate([np.zeros(idx_shift), signal])
                         signal = np.concatenate([signal, np.zeros(signal_rev.shape[0] - signal.shape[0])])
+                        sig_out = signal
                     elif args.speech_type == 'reverb':
-                        signal = signal_rev
+                        sig_out = signal_rev
                     else:
                         raise ValueError("speech_type can only be 'clean' or 'reverb'")
 
-                cc, log_mag, phase = feat_model.acc_log_spectrum(signal[np.newaxis, :])
-                acc_logmag += log_mag
-                acc_phase += phase
-                # acc_phase = (acc_phase + np.pi) % (2 * np.pi) - np.pi
+                cc, dct_sum, dst_sum = feat_model.acc_log_spectrum(sig_out[np.newaxis, :],
+                                                                   append_zero_factor=args.append_zero_factor)
+                acc_dct += dct_sum
+                acc_dst += dst_sum
                 count += cc
 
-    pkl.dump({'count': count, 'acc_logmag': acc_logmag, 'acc_phase': acc_phase}, open(args.outfile, 'wb'))
+    pkl.dump({'count': count, 'acc_dct': acc_dct, 'acc_dst': acc_dst}, open(args.outfile, 'wb'))
 
 
 if __name__ == '__main__':
