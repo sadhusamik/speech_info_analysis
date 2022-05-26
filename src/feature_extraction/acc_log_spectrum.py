@@ -113,8 +113,7 @@ def compute_modulations(args):
                     acc_dct += dct_sum
                     acc_dst += dst_sum
                     count += cc
-                else:
-                    print('%s: File: %s is too short so ignoring it ...' % (sys.argv[0], uttid))
+
 
     pkl.dump({'count': count, 'acc_dct': acc_dct, 'acc_dst': acc_dst}, open(args.outfile, 'wb'))
 
