@@ -106,7 +106,7 @@ def compute_modulations(args):
                     else:
                         raise ValueError("speech_type can only be 'clean' or 'reverb'")
 
-                cc, dct_sum, dst_sum = feat_model.acc_log_spectrum(sig_out[np.newaxis, :], append_len=args.append_len)
+                cc, dct_sum, dst_sum = feat_model.acc_log_spectrum(sig_out, append_len=args.append_len)
                 if cc is not None:
                     acc_dct += dct_sum
                     acc_dst += dst_sum
