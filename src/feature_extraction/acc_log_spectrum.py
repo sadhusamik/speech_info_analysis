@@ -25,7 +25,7 @@ def get_args():
     parser.add_argument('--fduration', type=float, default=0.02, help='Window length (0.02 sec)')
     parser.add_argument('--overlap_fraction', type=float, default=0.15, help='Overlap fraction for overlap-add')
     parser.add_argument('--srate', type=int, default=16000, help='Sampling rate of the signal')
-    parser.add_argument('--append_zero_factor', type=int, default=100, help='expand signal with this factor of zeros')
+    parser.add_argument('--append_len', type=int, default=1000000, help='APpend zeros to make signal this long')
     parser.add_argument('--add_reverb', help='input "clean" OR "small_room" OR "large_room"')
     parser.add_argument('--speech_type', default='clean', type=str, help="'clean' OR 'reverb'")
 
@@ -36,9 +36,8 @@ def compute_modulations(args):
     # Define FDLP class
     feat_model = FDLP(fduration=args.fduration, overlap_fraction=args.overlap_fraction, srate=args.srate)
 
-    N = int(args.fduration * args.srate)
-    acc_dct = np.zeros(N * (args.append_zero_factor + 1))
-    acc_dst = np.zeros(N * (args.append_zero_factor + 1))
+    acc_dct = np.zeros(args.append_len)
+    acc_dst = np.zeros(args.append_len)
     count = 0
 
     with open(args.scp, 'r') as fid:
@@ -107,14 +106,12 @@ def compute_modulations(args):
                     else:
                         raise ValueError("speech_type can only be 'clean' or 'reverb'")
 
-                cc, dct_sum, dst_sum = feat_model.acc_log_spectrum(sig_out[np.newaxis, :],
-                                                                   append_zero_factor=args.append_zero_factor)
+                cc, dct_sum, dst_sum = feat_model.acc_log_spectrum(sig_out[np.newaxis, :], append_len=args.append_len)
                 if cc is not None:
                     acc_dct += dct_sum
                     acc_dst += dst_sum
                     count += cc
                     print('%s:Extracted %d frames for file: %s' % (sys.argv[0], cc, uttid))
-
 
     pkl.dump({'count': count, 'acc_dct': acc_dct, 'acc_dst': acc_dst}, open(args.outfile, 'wb'))
 
