@@ -98,7 +98,7 @@ def compute_modulations(args):
                     if not add_reverb == 'clean':
                         signal_rev, idx_shift = addReverb_nodistortion(signal, rir)
                     if args.speech_type == 'clean':
-                        signal = np.concatenate([np.zeros(idx_shift), signal])
+                        #signal = np.concatenate([np.zeros(idx_shift), signal])
                         signal = np.concatenate([signal, np.zeros(signal_rev.shape[0] - signal.shape[0])])
                         sig_out = signal
                     elif args.speech_type == 'reverb':
