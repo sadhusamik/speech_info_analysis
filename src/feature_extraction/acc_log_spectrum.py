@@ -46,11 +46,11 @@ def compute_modulations(args):
         if add_reverb:
             if add_reverb == 'small_room':
                 sr_r, rir = read('./RIR/RIR_SmallRoom1_near_AnglA.wav')
-                rir = rir[:, 1]
+                rir = rir[:, 0]
                 rir = rir / np.power(2, 15)
             elif add_reverb == 'large_room':
                 sr_r, rir = read('./RIR/RIR_LargeRoom1_far_AnglA.wav')
-                rir = rir[:, 1]
+                rir = rir[:, 0]
                 rir = rir / np.power(2, 15)
             elif add_reverb == 'clean':
                 print('%s: No reverberation added!' % sys.argv[0])
