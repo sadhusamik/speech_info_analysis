@@ -25,7 +25,7 @@ def get_args():
     parser.add_argument('--fduration', type=float, default=0.02, help='Window length (0.02 sec)')
     parser.add_argument('--overlap_fraction', type=float, default=0.15, help='Overlap fraction for overlap-add')
     parser.add_argument('--srate', type=int, default=16000, help='Sampling rate of the signal')
-    parser.add_argument('--append_len', type=int, default=1000000, help='APpend zeros to make signal this long')
+    parser.add_argument('--append_len', type=int, default=1000000, help='Append zeros to make signal this long')
     parser.add_argument('--add_reverb', help='input "clean" OR "small_room" OR "large_room"')
     parser.add_argument('--speech_type', default='clean', type=str, help="'clean' OR 'reverb'")
 

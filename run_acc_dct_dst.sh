@@ -12,7 +12,7 @@ overlap_fraction=0.75
 fduration=5
 speech_type='clean'
 
-append_name=${speech_type}_fduration${fduration}_of${overlap_fraction}
+append_name=${speech_type}_${add_reverb}
 feat_binary=compute_average_spectrum.sh  # make_modulation_feats.sh
 
 . parse_options.sh || exit 1;
