@@ -11,6 +11,7 @@ overlap_fraction=0.5
 fduration=1.5
 speech_type='clean'
 srate=16000
+exec_file='acc_log_spectrum.py'
 
 . parse_options.sh || exit 1;
 
@@ -47,13 +48,13 @@ done
 
 utils/split_scp.pl $scp $split_scp || exit 1;
 
-echo "$0: Computing average DST-DCT spectral features for scp files..."
+echo "$0: Computing average spectral features for scp files..."
 
 # Compute mel spectrum features
 
 $cmd --mem 5G JOB=1:$nj \
   $log_dir/acc_spectrum_${name}_${speech_type}_${add_reverb}.JOB.log \
-  acc_log_spectrum.py \
+  ${exec_file} \
     $log_dir/wav_${name}.JOB.scp \
     $feat_dir/avg_spectrum_${name}.JOB.pkl \
     --add_reverb=${add_reverb} \
