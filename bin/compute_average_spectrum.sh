@@ -29,6 +29,10 @@ mkdir -p $feat_dir
 name=`basename $data_dir`
 scp=$data_dir/wav.scp
 
+add_opts=""
+if [ -f "$data_dir/segments" ]; then
+    add_opts="${add_opts} --segment_file=$data_dir/segments"
+fi
 log_dir=$data_dir/log
 
 mkdir -p $log_dir
@@ -36,8 +40,6 @@ log_dir=`realpath ${log_dir}`
 
 
 # split files
-
-echo $0": Splitting segment OR scp files for parallalization..."
 
 echo "$0: Splitting scp files..."
 
@@ -54,7 +56,7 @@ echo "$0: Computing average spectral features for scp files..."
 
 $cmd --mem 5G JOB=1:$nj \
   $log_dir/acc_spectrum_${name}_${speech_type}_${add_reverb}.JOB.log \
-  ${exec_file} \
+  ${exec_file} ${add_opts} \
     $log_dir/wav_${name}.JOB.scp \
     $feat_dir/avg_spectrum_${name}.JOB.pkl \
     --add_reverb=${add_reverb} \
