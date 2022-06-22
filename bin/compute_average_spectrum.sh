@@ -52,7 +52,7 @@ if $add_segment; then
   $cmd --mem 5G JOB=1:$nj \
   $log_dir/acc_spectrum_${name}_${speech_type}_${add_reverb}.JOB.log \
   ${exec_file} ${add_opts} \
-    $data_dir/split50utt/JOB/wav.scp \
+    $data_dir/split${nj}utt/JOB/wav.scp \
     $feat_dir/avg_spectrum_${name}.JOB.pkl \
     --segment_file=$data_dir/split50utt/JOB/segments \
     --add_reverb=${add_reverb} \
