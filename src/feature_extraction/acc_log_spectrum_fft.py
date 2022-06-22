@@ -77,6 +77,8 @@ def compute_modulations(args):
                             sig_out = signal_rev
                         else:
                             raise ValueError("speech_type can only be 'clean' or 'reverb'")
+                    else:
+                        sig_out = signal
 
                 cc, logmag, phase = feat_model.acc_log_spectrum_fft(sig_out, append_len=args.append_len)
                 if cc is not None:
