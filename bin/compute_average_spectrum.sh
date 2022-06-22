@@ -51,8 +51,8 @@ echo "$0: Computing average spectral features for scp files..."
 if $add_segment; then
   $cmd --mem 5G JOB=1:$nj \
   $log_dir/acc_spectrum_${name}_${speech_type}_${add_reverb}.JOB.log \
-  ${exec_file} ${add_opts} \
-    $data_dir/split${nj}utt/JOB/wav.scp \
+  ${exec_file}  \
+    $data_dir/split${nj}/JOB/wav.scp \
     $feat_dir/avg_spectrum_${name}.JOB.pkl \
     --segment_file=$data_dir/split50utt/JOB/segments \
     --add_reverb=${add_reverb} \
@@ -63,8 +63,8 @@ if $add_segment; then
 else
   $cmd --mem 5G JOB=1:$nj \
     $log_dir/acc_spectrum_${name}_${speech_type}_${add_reverb}.JOB.log \
-    ${exec_file} ${add_opts} \
-      $data_dir/split${nj}utt/JOB/wav.scp \
+    ${exec_file} \
+      $data_dir/split${nj}/JOB/wav.scp \
       $feat_dir/avg_spectrum_${name}.JOB.pkl \
       --add_reverb=${add_reverb} \
       --fduration=${fduration} \
