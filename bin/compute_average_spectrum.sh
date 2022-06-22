@@ -12,6 +12,7 @@ fduration=1.5
 speech_type='clean'
 srate=16000
 exec_file='acc_log_spectrum.py'
+no_split=false
 
 . parse_options.sh || exit 1;
 
@@ -60,6 +61,17 @@ if $add_segment; then
     --overlap_fraction=${overlap_fraction} \
     --speech_type=${speech_type} \
     --srate=16000 || exit 1;
+elif ${no_split}; then
+   $cmd --mem 5G JOB=1 \
+    $log_dir/acc_spectrum_${name}_${speech_type}_${add_reverb}.JOB.log \
+    ${exec_file} \
+      $data_dir/wav.scp \
+      $feat_dir/avg_spectrum_${name}.JOB.pkl \
+      --add_reverb=${add_reverb} \
+      --fduration=${fduration} \
+      --overlap_fraction=${overlap_fraction} \
+      --speech_type=${speech_type} \
+      --srate=16000 || exit 1;
 else
   $cmd --mem 5G JOB=1:$nj \
     $log_dir/acc_spectrum_${name}_${speech_type}_${add_reverb}.JOB.log \
