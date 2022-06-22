@@ -94,14 +94,14 @@ def compute_modulations(args):
                 if add_reverb:
                     if not add_reverb == 'clean':
                         signal_rev, idx_shift = addReverb_nodistortion(signal, rir)
-                    if args.speech_type == 'clean':
-                        # signal = np.concatenate([np.zeros(idx_shift), signal])
-                        signal = np.concatenate([signal, np.zeros(signal_rev.shape[0] - signal.shape[0])])
-                        sig_out = signal
-                    elif args.speech_type == 'reverb':
-                        sig_out = signal_rev
-                    else:
-                        raise ValueError("speech_type can only be 'clean' or 'reverb'")
+                        if args.speech_type == 'clean':
+                            # signal = np.concatenate([np.zeros(idx_shift), signal])
+                            signal = np.concatenate([signal, np.zeros(signal_rev.shape[0] - signal.shape[0])])
+                            sig_out = signal
+                        elif args.speech_type == 'reverb':
+                            sig_out = signal_rev
+                        else:
+                            raise ValueError("speech_type can only be 'clean' or 'reverb'")
 
                 cc, logmag, phase = feat_model.acc_log_spectrum_fft(sig_out, append_len=args.append_len)
                 if cc is not None:
