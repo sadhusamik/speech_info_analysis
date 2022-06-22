@@ -54,7 +54,7 @@ if $add_segment; then
   ${exec_file}  \
     $data_dir/split${nj}/JOB/wav.scp \
     $feat_dir/avg_spectrum_${name}.JOB.pkl \
-    --segment_file=$data_dir/split50utt/JOB/segments \
+    --segment_file=$data_dir/split${nj}/JOB/segments \
     --add_reverb=${add_reverb} \
     --fduration=${fduration} \
     --overlap_fraction=${overlap_fraction} \
