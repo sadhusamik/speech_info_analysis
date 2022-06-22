@@ -13,6 +13,7 @@ speech_type='clean'
 srate=16000
 exec_file='acc_log_spectrum.py'
 no_split=false
+append_len=130000000
 
 . parse_options.sh || exit 1;
 
@@ -67,6 +68,7 @@ elif ${no_split}; then
     ${exec_file} \
       $data_dir/wav.scp \
       $feat_dir/avg_spectrum_${name}.JOB.pkl \
+      --append_len=${append_len} \
       --add_reverb=${add_reverb} \
       --fduration=${fduration} \
       --overlap_fraction=${overlap_fraction} \
