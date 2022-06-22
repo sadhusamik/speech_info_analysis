@@ -55,7 +55,7 @@ def compute_modulations(args):
         elif add_reverb == 'clean':
             print('%s: No reverberation added!' % sys.argv[0])
         else:
-            raise ValueError('Invalid type of reverberation!')
+            raise ValueError('Invalid type of reverberation!   ')
 
     # Feature extraction
     if args.segment_file is None:
