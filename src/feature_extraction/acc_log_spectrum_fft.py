@@ -17,6 +17,7 @@ import pickle as pkl
 import logging
 from kaldiio import ReadHelper
 
+
 def get_args():
     parser = argparse.ArgumentParser('Extract Modulation Features (FDLP-spectrogram OR M-vectors)')
     parser.add_argument('scp', help='scp file')
@@ -33,7 +34,6 @@ def get_args():
 
 
 def compute_modulations(args):
-
     # Define FDLP class
     feat_model = FDLP(fduration=args.fduration, overlap_fraction=args.overlap_fraction, srate=args.srate)
 
@@ -57,10 +57,9 @@ def compute_modulations(args):
         else:
             raise ValueError('Invalid type of reverberation!')
 
-
     # Feature extraction
     if args.segment_file is None:
-        with ReadHelper('scp:'+args.scp) as reader:
+        with ReadHelper('scp:' + args.scp) as reader:
             for key, (rate, signal) in reader:
 
                 print('%s: Computing Features for file: %s' % (sys.argv[0], key))
@@ -70,14 +69,14 @@ def compute_modulations(args):
                 if add_reverb:
                     if not add_reverb == 'clean':
                         signal_rev, idx_shift = addReverb_nodistortion(signal, rir)
-                    if args.speech_type == 'clean':
-                        # signal = np.concatenate([np.zeros(idx_shift), signal])
-                        signal = np.concatenate([signal, np.zeros(signal_rev.shape[0] - signal.shape[0])])
-                        sig_out = signal
-                    elif args.speech_type == 'reverb':
-                        sig_out = signal_rev
-                    else:
-                        raise ValueError("speech_type can only be 'clean' or 'reverb'")
+                        if args.speech_type == 'clean':
+                            # signal = np.concatenate([np.zeros(idx_shift), signal])
+                            signal = np.concatenate([signal, np.zeros(signal_rev.shape[0] - signal.shape[0])])
+                            sig_out = signal
+                        elif args.speech_type == 'reverb':
+                            sig_out = signal_rev
+                        else:
+                            raise ValueError("speech_type can only be 'clean' or 'reverb'")
 
                 cc, logmag, phase = feat_model.acc_log_spectrum_fft(sig_out, append_len=args.append_len)
                 if cc is not None:
@@ -85,7 +84,7 @@ def compute_modulations(args):
                     acc_phase += phase
                     count += cc
     else:
-        with ReadHelper('scp:' + args.scp,segments=args.segment_file) as reader:
+        with ReadHelper('scp:' + args.scp, segments=args.segment_file) as reader:
             for key, (rate, signal) in reader:
 
                 print('%s: Computing Features for file: %s' % (sys.argv[0], key))
@@ -111,6 +110,7 @@ def compute_modulations(args):
                     count += cc
 
     pkl.dump({'count': count, 'acc_logmag': acc_logmag, 'acc_phase': acc_phase}, open(args.outfile, 'wb'))
+
 
 if __name__ == '__main__':
     args = get_args()
