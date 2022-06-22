@@ -31,6 +31,7 @@ scp=$data_dir/wav.scp
 
 add_opts=""
 if [ -f "$data_dir/segments" ]; then
+    echo "Adding segment files from $data_dir/segments"
     add_opts="${add_opts} --segment_file=$data_dir/segments"
 fi
 log_dir=$data_dir/log
