@@ -13,7 +13,7 @@ speech_type='clean'
 srate=16000
 exec_file='acc_log_spectrum.py'
 no_split=false
-append_len=130000000
+append_len=1000000
 
 . parse_options.sh || exit 1;
 
