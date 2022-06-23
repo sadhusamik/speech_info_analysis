@@ -58,7 +58,7 @@ def compute_modulations(args):
 
     # Feature extraction
     idx = 0
-    count=0
+    count = 0
     frate = 1 / (args.fduration - args.overlap_fraction * args.fduration)
     flength_samples = int(args.srate * args.fduration)
     frate_samples = int(args.srate / frate)
@@ -67,8 +67,10 @@ def compute_modulations(args):
 
             while idx + frate_samples < signal_whole.shape[0]:
                 signal = signal_whole[idx:idx + flength_samples]
-                count+=1
-                print('%s: Computing Features for file %s chunk number %d' % (sys.argv[0], key, count))
+                count += 1
+                pp = 100 * idx / signal_whole.shape[0]
+                print('%s: Computing Features for file %s chunk number %d, %f percentage of sentence ' % (
+                sys.argv[0], key, count, pp))
                 sys.stdout.flush()
                 idx += frate_samples
                 # add reverberation
