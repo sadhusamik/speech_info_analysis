@@ -27,8 +27,7 @@ def get_args():
     parser.add_argument('--overlap_fraction', type=float, default=0.15, help='Overlap fraction for overlap-add')
     parser.add_argument('--srate', type=int, default=16000, help='Sampling rate of the signal')
     parser.add_argument('--append_len', type=int, default=1000000, help='Append zeros to make signal this long')
-    parser.add_argument('--add_reverb', help='input "clean" OR "small_room" OR "large_room"')
-    parser.add_argument('--speech_type', default='clean', type=str, help="'clean' OR 'reverb'")
+    parser.add_argument('--add_reverb', default=None, help='location of the RIR file')
 
     return parser.parse_args()
 
@@ -43,19 +42,12 @@ def compute_modulations(args):
 
     # Load reverberation files if provided
     add_reverb = args.add_reverb
-    if add_reverb:
-        if add_reverb == 'small_room':
-            sr_r, rir = read('./RIR/RIR_SmallRoom1_near_AnglA.wav')
-            rir = rir[:, 0]
-            rir = rir / np.power(2, 15)
-        elif add_reverb == 'large_room':
-            sr_r, rir = read('./RIR/RIR_LargeRoom1_far_AnglA.wav')
-            rir = rir[:, 0]
-            rir = rir / np.power(2, 15)
-        elif add_reverb == 'clean':
-            print('%s: No reverberation added!' % sys.argv[0])
-        else:
-            raise ValueError('Invalid type of reverberation!   ')
+    if add_reverb is not None:
+        sr_r, rir = read(add_reverb)
+        rir = rir[:, 0]
+        rir = rir / np.power(2, 15)
+    else:
+        print('%s: No reverberation added!' % sys.argv[0])
 
     # Feature extraction
     if args.segment_file is None:
@@ -66,21 +58,22 @@ def compute_modulations(args):
                 sys.stdout.flush()
 
                 # add reverberation
-                if add_reverb:
-                    if not add_reverb == 'clean':
-                        signal_rev, idx_shift = addReverb_nodistortion(signal, rir)
-                        if args.speech_type == 'clean':
-                            # signal = np.concatenate([np.zeros(idx_shift), signal])
-                            signal = np.concatenate([signal, np.zeros(signal_rev.shape[0] - signal.shape[0])])
-                            sig_out = signal
-                        elif args.speech_type == 'reverb':
-                            sig_out = signal_rev
-                        else:
-                            raise ValueError("speech_type can only be 'clean' or 'reverb'")
-                    else:
-                        sig_out = signal
+                if add_reverb is not None:
+                    signal, idx_shift = addReverb_nodistortion(signal, rir)
+                    #if not add_reverb == 'clean':
 
-                cc, logmag, phase = feat_model.acc_log_spectrum_fft(sig_out, append_len=args.append_len)
+                    #    if args.speech_type == 'clean':
+                            # signal = np.concatenate([np.zeros(idx_shift), signal])
+                    #        signal = np.concatenate([signal, np.zeros(signal_rev.shape[0] - signal.shape[0])])
+                    #        sig_out = signal
+                    #    elif args.speech_type == 'reverb':
+                    #        sig_out = signal_rev
+                    #    else:
+                    #        raise ValueError("speech_type can only be 'clean' or 'reverb'")
+                    #else:
+                    #    sig_out = signal
+
+                cc, logmag, phase = feat_model.acc_log_spectrum_fft(signal, append_len=args.append_len)
                 if cc is not None:
                     acc_logmag += logmag
                     acc_phase += phase
@@ -93,21 +86,24 @@ def compute_modulations(args):
                 sys.stdout.flush()
 
                 # add reverberation
-                if add_reverb:
-                    if not add_reverb == 'clean':
-                        signal_rev, idx_shift = addReverb_nodistortion(signal, rir)
-                        if args.speech_type == 'clean':
-                            # signal = np.concatenate([np.zeros(idx_shift), signal])
-                            signal = np.concatenate([signal, np.zeros(signal_rev.shape[0] - signal.shape[0])])
-                            sig_out = signal
-                        elif args.speech_type == 'reverb':
-                            sig_out = signal_rev
-                        else:
-                            raise ValueError("speech_type can only be 'clean' or 'reverb'")
-                    else:
-                        sig_out = signal
+                if add_reverb is not None:
+                    signal, idx_shift = addReverb_nodistortion(signal, rir)
 
-                cc, logmag, phase = feat_model.acc_log_spectrum_fft(sig_out, append_len=args.append_len)
+                #if add_reverb:
+                #    if not add_reverb == 'clean':
+                #        signal_rev, idx_shift = addReverb_nodistortion(signal, rir)
+                #        if args.speech_type == 'clean':
+                #            # signal = np.concatenate([np.zeros(idx_shift), signal])
+                #            signal = np.concatenate([signal, np.zeros(signal_rev.shape[0] - signal.shape[0])])
+                #            sig_out = signal
+                #        elif args.speech_type == 'reverb':
+                #            sig_out = signal_rev
+                #        else:
+                #            raise ValueError("speech_type can only be 'clean' or 'reverb'")
+                #    else:
+                #        sig_out = signal
+
+                cc, logmag, phase = feat_model.acc_log_spectrum_fft(signal, append_len=args.append_len)
                 if cc is not None:
                     acc_logmag += logmag
                     acc_phase += phase

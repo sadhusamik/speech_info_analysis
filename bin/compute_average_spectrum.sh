@@ -6,10 +6,9 @@
 
 nj=100
 cmd=queue.pl
-add_reverb=large_room
+add_reverb=
 overlap_fraction=0.5
 fduration=1.5
-speech_type='clean'
 srate=16000
 exec_file='acc_log_spectrum.py'
 no_split=false
@@ -37,6 +36,11 @@ if [ -f "$data_dir/segments" ]; then
 fi
 log_dir=$data_dir/log
 
+add_opts=""
+if [ ! -z ${add_reverb} ] ; then
+  add_opts="${add_opts} --add_reverb=${add_reverb}"
+fi
+
 mkdir -p $log_dir
 log_dir=`realpath ${log_dir}`
 
@@ -52,38 +56,33 @@ echo "$0: Computing average spectral features for scp files..."
 
 if $add_segment; then
   $cmd --mem 5G JOB=1:$nj \
-  $log_dir/acc_spectrum_${name}_${speech_type}_${add_reverb}.JOB.log \
+  $log_dir/acc_spectrum_${name}_${add_reverb}.JOB.log \
   ${exec_file}  \
     $data_dir/split${nj}/JOB/wav.scp \
-    $feat_dir/avg_spectrum_${name}.JOB.pkl \
+    $feat_dir/avg_spectrum_${name}.JOB.pkl ${add_opts} \
     --segment_file=$data_dir/split${nj}/JOB/segments \
-    --add_reverb=${add_reverb} \
     --fduration=${fduration} \
     --overlap_fraction=${overlap_fraction} \
-    --speech_type=${speech_type} \
     --srate=16000 || exit 1;
 elif ${no_split}; then
    $cmd --mem 5G JOB=1 \
-    $log_dir/acc_spectrum_${name}_${speech_type}_${add_reverb}.JOB.log \
+    $log_dir/acc_spectrum_${name}_${add_reverb}.JOB.log \
     ${exec_file} \
       $data_dir/wav.scp \
-      $feat_dir/avg_spectrum_${name}.JOB.pkl \
+      $feat_dir/avg_spectrum_${name}.JOB.pkl ${add_opts} \
       --append_len=${append_len} \
-      --add_reverb=${add_reverb} \
       --fduration=${fduration} \
       --overlap_fraction=${overlap_fraction} \
-      --speech_type=${speech_type} \
       --srate=16000 || exit 1;
 else
   $cmd --mem 5G JOB=1:$nj \
-    $log_dir/acc_spectrum_${name}_${speech_type}_${add_reverb}.JOB.log \
+    $log_dir/acc_spectrum_${name}_${add_reverb}.JOB.log \
     ${exec_file} \
       $data_dir/split${nj}/JOB/wav.scp \
       $feat_dir/avg_spectrum_${name}.JOB.pkl \
       --add_reverb=${add_reverb} \
       --fduration=${fduration} \
       --overlap_fraction=${overlap_fraction} \
-      --speech_type=${speech_type} \
       --srate=16000 || exit 1;
 fi
 
