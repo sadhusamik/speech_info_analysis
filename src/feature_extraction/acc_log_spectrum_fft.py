@@ -73,7 +73,7 @@ def compute_modulations(args):
                     # else:
                     #    sig_out = signal
                 #signal = signal[0:16000 * 4]
-                cc, logmag, phase = feat_model.acc_log_spectrum_fft(signal, append_len=args.append_len, discont=np.pi/2)
+                cc, logmag, phase = feat_model.acc_log_spectrum_fft(signal, append_len=args.append_len, discont=3*np.pi/2)
                 if cc is not None:
                     acc_logmag += logmag
                     acc_phase += phase
