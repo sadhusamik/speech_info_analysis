@@ -80,7 +80,6 @@ else
     ${exec_file} \
       $data_dir/split${nj}/JOB/wav.scp \
       $feat_dir/avg_spectrum_${name}.JOB.pkl \
-      --add_reverb=${add_reverb} \
       --fduration=${fduration} \
       --overlap_fraction=${overlap_fraction} \
       --srate=16000 || exit 1;
