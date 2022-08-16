@@ -22,6 +22,7 @@ def get_args():
     parser = argparse.ArgumentParser('Extract Modulation Features (FDLP-spectrogram OR M-vectors)')
     parser.add_argument('scp', help='scp file')
     parser.add_argument('outfile', help='output file')
+    parser.add_argument('--use_frames', type=bool, default=False, help='Use frames instead whole utterance')
     parser.add_argument("--segment_file", default=None, type=str, help="segment file will be used if provided")
     parser.add_argument('--fduration', type=float, default=0.02, help='Window length (0.02 sec)')
     parser.add_argument('--overlap_fraction', type=float, default=0.15, help='Overlap fraction for overlap-add')
@@ -60,6 +61,7 @@ def compute_modulations(args):
                 # add reverberation
                 if add_reverb is not None:
                     signal, idx_shift = addReverb_nodistortion(signal, rir)
+
                     # if not add_reverb == 'clean':
 
                     #    if args.speech_type == 'clean':
@@ -73,8 +75,14 @@ def compute_modulations(args):
                     # else:
                     #    sig_out = signal
                 # signal = signal[0:16000 * 4]
-                cc, logmag, phase = feat_model.acc_log_spectrum_fft(signal, append_len=args.append_len,
-                                                                    discont=3 * np.pi / 2)
+
+                if args.use_frames:
+                    cc, logmag, phase = feat_model.acc_log_spectrum_fft_frames(signal, append_len=args.append_len,
+                                                                               discont=np.pi)
+                else:
+                    cc, logmag, phase = feat_model.acc_log_spectrum_fft(signal, append_len=args.append_len,
+                                                                        discont=np.pi)
+
                 if cc is not None:
                     acc_logmag += logmag
                     acc_phase += phase
@@ -103,8 +111,13 @@ def compute_modulations(args):
                 #            raise ValueError("speech_type can only be 'clean' or 'reverb'")
                 #    else:
                 #        sig_out = signal
+                if args.use_frames:
+                    cc, logmag, phase = feat_model.acc_log_spectrum_fft_frames(signal, append_len=args.append_len,
+                                                                               discont=np.pi)
+                else:
+                    cc, logmag, phase = feat_model.acc_log_spectrum_fft(signal, append_len=args.append_len,
+                                                                        discont=np.pi)
 
-                cc, logmag, phase = feat_model.acc_log_spectrum_fft(signal, append_len=args.append_len)
                 if cc is not None:
                     acc_logmag += logmag
                     acc_phase += phase
