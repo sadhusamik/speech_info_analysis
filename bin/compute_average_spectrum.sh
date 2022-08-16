@@ -85,7 +85,7 @@ else
     $log_dir/acc_spectrum_${name}_${add_reverb}.JOB.log \
     ${exec_file} \
       $data_dir/split${nj}/JOB/wav.scp \
-      $feat_dir/avg_spectrum_${name}.JOB.pkl \
+      $feat_dir/avg_spectrum_${name}.JOB.pkl ${add_opts} \
       --use_frames=${use_frames} \
       --fduration=${fduration} \
       --overlap_fraction=${overlap_fraction} \
