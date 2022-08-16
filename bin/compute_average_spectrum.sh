@@ -11,6 +11,8 @@ overlap_fraction=0.5
 fduration=1.5
 srate=16000
 exec_file='acc_log_spectrum.py'
+use_frames=False
+
 no_split=false
 append_len=1000000
 
@@ -60,26 +62,31 @@ if $add_segment; then
   ${exec_file}  \
     $data_dir/split${nj}/JOB/wav.scp \
     $feat_dir/avg_spectrum_${name}.JOB.pkl ${add_opts} \
+    --use_frames=${use_frames} \
     --segment_file=$data_dir/split${nj}/JOB/segments \
     --fduration=${fduration} \
     --overlap_fraction=${overlap_fraction} \
     --srate=16000 || exit 1;
+
 elif ${no_split}; then
    $cmd --mem 5G JOB=1 \
     $log_dir/acc_spectrum_${name}_${add_reverb}.JOB.log \
     ${exec_file} \
       $data_dir/wav.scp \
       $feat_dir/avg_spectrum_${name}.JOB.pkl ${add_opts} \
+      --use_frames=${use_frames} \
       --append_len=${append_len} \
       --fduration=${fduration} \
       --overlap_fraction=${overlap_fraction} \
       --srate=16000 || exit 1;
 else
+
   $cmd --mem 5G JOB=1:$nj \
     $log_dir/acc_spectrum_${name}_${add_reverb}.JOB.log \
     ${exec_file} \
       $data_dir/split${nj}/JOB/wav.scp \
       $feat_dir/avg_spectrum_${name}.JOB.pkl \
+      --use_frames=${use_frames} \
       --fduration=${fduration} \
       --overlap_fraction=${overlap_fraction} \
       --srate=16000 || exit 1;
