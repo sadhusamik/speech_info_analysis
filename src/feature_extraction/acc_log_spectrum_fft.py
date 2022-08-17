@@ -60,8 +60,9 @@ def compute_modulations(args):
 
                 # add reverberation
                 if add_reverb is not None:
+                    L = signal.shape[0]
                     signal, idx_shift = addReverb_nodistortion(signal, rir)
-
+                    signal = signal[0:L]
                     # if not add_reverb == 'clean':
 
                     #    if args.speech_type == 'clean':
@@ -96,7 +97,9 @@ def compute_modulations(args):
 
                 # add reverberation
                 if add_reverb is not None:
+                    L = signal.shape[0]
                     signal, idx_shift = addReverb_nodistortion(signal, rir)
+                    signal = signal[0:L]
 
                 # if add_reverb:
                 #    if not add_reverb == 'clean':
