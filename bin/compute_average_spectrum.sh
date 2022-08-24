@@ -12,6 +12,7 @@ fduration=1.5
 srate=16000
 exec_file='acc_log_spectrum.py'
 use_frames=False
+append_time=
 
 no_split=false
 append_len=1000000
@@ -41,6 +42,10 @@ log_dir=$data_dir/log
 add_opts=""
 if [ ! -z ${add_reverb} ] ; then
   add_opts="${add_opts} --add_reverb=${add_reverb}"
+fi
+
+if [ ! -z ${append_time} ] ; then
+  add_opts="${add_opts} --append_time=${append_time}"
 fi
 
 mkdir -p $log_dir
