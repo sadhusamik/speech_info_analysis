@@ -62,7 +62,7 @@ echo "$0: Computing average spectral features for scp files..."
 # Compute mel spectrum features
 
 if $add_segment; then
-  $cmd -l 'ram_free=5G' --mem 5G JOB=1:$nj \
+  $cmd --mem 10G -l 'ram_free=10G' JOB=1:$nj \
   $log_dir/acc_spectrum_${name}_${add_reverb}.JOB.log \
   ${exec_file}  \
     $data_dir/split${nj}/JOB/wav.scp \
@@ -74,7 +74,7 @@ if $add_segment; then
     --srate=16000 || exit 1;
 
 elif ${no_split}; then
-   $cmd -l 'ram_free=5G' --mem 5G JOB=1 \
+   $cmd --mem 10G -l 'ram_free=10G' --mem 5G JOB=1 \
     $log_dir/acc_spectrum_${name}_${add_reverb}.JOB.log \
     ${exec_file} \
       $data_dir/wav.scp \
@@ -86,7 +86,7 @@ elif ${no_split}; then
       --srate=16000 || exit 1;
 else
 
-  $cmd -l 'ram_free=5G' --mem 5G JOB=1:$nj \
+  $cmd --mem 10G -l 'ram_free=10G' --mem 5G JOB=1:$nj \
     $log_dir/acc_spectrum_${name}_${add_reverb}.JOB.log \
     ${exec_file} \
       $data_dir/split${nj}/JOB/wav.scp \
