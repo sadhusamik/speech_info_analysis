@@ -57,7 +57,7 @@ def compute_modulations(args):
         time = 0
         time_limit = args.append_time
         time_limit = time_limit * 60
-        count = 0
+        county = 0
 
     # Feature extraction
     if args.segment_file is None:
@@ -69,8 +69,8 @@ def compute_modulations(args):
                         wavfile = np.concatenate([wavfile, signal])
                         time += len(signal) / args.srate
                     else:
-                        count += 1
-                        print('%s: Computing Features appended speech file number: %d' % (sys.argv[0], count))
+                        county += 1
+                        print('%s: Computing Features appended speech file number: %d' % (sys.argv[0], county))
                         sys.stdout.flush()
                         # add reverberation
                         if add_reverb is not None:
@@ -121,8 +121,8 @@ def compute_modulations(args):
                         wavfile = np.concatenate([wavfile, signal])
                         time += len(signal) / args.srate
                     else:
-                        count += 1
-                        print('%s: Computing Features appended speech file number: %d' % (sys.argv[0], count))
+                        county += 1
+                        print('%s: Computing Features appended speech file number: %d' % (sys.argv[0], county))
                         sys.stdout.flush()
                         # add reverberation
                         if add_reverb is not None:
