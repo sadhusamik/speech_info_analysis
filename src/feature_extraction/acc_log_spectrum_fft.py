@@ -23,6 +23,8 @@ def get_args():
     parser.add_argument('scp', help='scp file')
     parser.add_argument('outfile', help='output file')
     parser.add_argument('--use_frames', type=bool, default=False, help='Use frames instead whole utterance')
+    parser.add_argument("--append_time", default=None, type=float,
+                        help="Duration of speech to accumulate before processing")
     parser.add_argument("--segment_file", default=None, type=str, help="segment file will be used if provided")
     parser.add_argument('--fduration', type=float, default=0.02, help='Window length (0.02 sec)')
     parser.add_argument('--overlap_fraction', type=float, default=0.15, help='Overlap fraction for overlap-add')
@@ -50,6 +52,13 @@ def compute_modulations(args):
     else:
         print('%s: No reverberation added!' % sys.argv[0])
 
+    if args.append_time is not None:
+        wavfile = np.zeros(1)
+        time = 0
+        time_limit =  args.append_time
+        time_limit = time_limit * 60
+
+
     # Feature extraction
     if args.segment_file is None:
         with ReadHelper('scp:' + args.scp) as reader:
@@ -58,36 +67,49 @@ def compute_modulations(args):
                 print('%s: Computing Features for file: %s' % (sys.argv[0], key))
                 sys.stdout.flush()
 
-                # add reverberation
-                if add_reverb is not None:
-                    L = signal.shape[0]
-                    signal, idx_shift = addReverb_nodistortion(signal, rir)
-                    signal = signal[0:L]
-                    # if not add_reverb == 'clean':
+                if args.append_time is not None:
+                    if time <= time_limit:
+                        wavfile = np.concatenate([wavfile, signal])
+                        time += len(signal) / args.srate
+                    else:
+                        # add reverberation
+                        if add_reverb is not None:
+                            L = wavfile.shape[0]
+                            wavfile, idx_shift = addReverb_nodistortion(wavfile, rir)
+                            wavfile = wavfile[0:L]
 
-                    #    if args.speech_type == 'clean':
-                    # signal = np.concatenate([np.zeros(idx_shift), signal])
-                    #        signal = np.concatenate([signal, np.zeros(signal_rev.shape[0] - signal.shape[0])])
-                    #        sig_out = signal
-                    #    elif args.speech_type == 'reverb':
-                    #        sig_out = signal_rev
-                    #    else:
-                    #        raise ValueError("speech_type can only be 'clean' or 'reverb'")
-                    # else:
-                    #    sig_out = signal
-                # signal = signal[0:16000 * 4]
+                        if args.use_frames:
+                            cc, logmag, phase = feat_model.acc_log_spectrum_fft_frames(wavfile,
+                                                                                       append_len=args.append_len,
+                                                                                       discont=np.pi)
+                        else:
+                            cc, logmag, phase = feat_model.acc_log_spectrum_fft(wavfile, append_len=args.append_len,
+                                                                                discont=np.pi)
+                        if cc is not None:
+                            acc_logmag += logmag
+                            acc_phase += phase
+                            count += cc
 
-                if args.use_frames:
-                    cc, logmag, phase = feat_model.acc_log_spectrum_fft_frames(signal, append_len=args.append_len,
-                                                                               discont=np.pi)
+                        wavfile = np.zeros(1)
+                        time = 0
                 else:
-                    cc, logmag, phase = feat_model.acc_log_spectrum_fft(signal, append_len=args.append_len,
-                                                                        discont=np.pi)
+                    # add reverberation
+                    if add_reverb is not None:
+                        L = signal.shape[0]
+                        signal, idx_shift = addReverb_nodistortion(signal, rir)
+                        signal = signal[0:L]
 
-                if cc is not None:
-                    acc_logmag += logmag
-                    acc_phase += phase
-                    count += cc
+                    if args.use_frames:
+                        cc, logmag, phase = feat_model.acc_log_spectrum_fft_frames(signal, append_len=args.append_len,
+                                                                                   discont=np.pi)
+                    else:
+                        cc, logmag, phase = feat_model.acc_log_spectrum_fft(signal, append_len=args.append_len,
+                                                                            discont=np.pi)
+
+                    if cc is not None:
+                        acc_logmag += logmag
+                        acc_phase += phase
+                        count += cc
     else:
         with ReadHelper('scp:' + args.scp, segments=args.segment_file) as reader:
             for key, (rate, signal) in reader:
@@ -95,36 +117,49 @@ def compute_modulations(args):
                 print('%s: Computing Features for file: %s' % (sys.argv[0], key))
                 sys.stdout.flush()
 
-                # add reverberation
-                if add_reverb is not None:
-                    L = signal.shape[0]
-                    signal, idx_shift = addReverb_nodistortion(signal, rir)
-                    signal = signal[0:L]
+                if args.append_time is not None:
+                    if time <= time_limit:
+                        wavfile = np.concatenate([wavfile, signal])
+                        time += len(signal) / args.srate
+                    else:
+                        # add reverberation
+                        if add_reverb is not None:
+                            L = wavfile.shape[0]
+                            wavfile, idx_shift = addReverb_nodistortion(wavfile, rir)
+                            wavfile = wavfile[0:L]
 
-                # if add_reverb:
-                #    if not add_reverb == 'clean':
-                #        signal_rev, idx_shift = addReverb_nodistortion(signal, rir)
-                #        if args.speech_type == 'clean':
-                #            # signal = np.concatenate([np.zeros(idx_shift), signal])
-                #            signal = np.concatenate([signal, np.zeros(signal_rev.shape[0] - signal.shape[0])])
-                #            sig_out = signal
-                #        elif args.speech_type == 'reverb':
-                #            sig_out = signal_rev
-                #        else:
-                #            raise ValueError("speech_type can only be 'clean' or 'reverb'")
-                #    else:
-                #        sig_out = signal
-                if args.use_frames:
-                    cc, logmag, phase = feat_model.acc_log_spectrum_fft_frames(signal, append_len=args.append_len,
-                                                                               discont=np.pi)
+                        if args.use_frames:
+                            cc, logmag, phase = feat_model.acc_log_spectrum_fft_frames(wavfile,
+                                                                                       append_len=args.append_len,
+                                                                                       discont=np.pi)
+                        else:
+                            cc, logmag, phase = feat_model.acc_log_spectrum_fft(wavfile, append_len=args.append_len,
+                                                                                discont=np.pi)
+
+                        if cc is not None:
+                            acc_logmag += logmag
+                            acc_phase += phase
+                            count += cc
+                        wavfile = np.zeros(1)
+                        time = 0
                 else:
-                    cc, logmag, phase = feat_model.acc_log_spectrum_fft(signal, append_len=args.append_len,
-                                                                        discont=np.pi)
+                    # add reverberation
+                    if add_reverb is not None:
+                        L = signal.shape[0]
+                        signal, idx_shift = addReverb_nodistortion(signal, rir)
+                        signal = signal[0:L]
 
-                if cc is not None:
-                    acc_logmag += logmag
-                    acc_phase += phase
-                    count += cc
+                    if args.use_frames:
+                        cc, logmag, phase = feat_model.acc_log_spectrum_fft_frames(signal, append_len=args.append_len,
+                                                                                   discont=np.pi)
+                    else:
+                        cc, logmag, phase = feat_model.acc_log_spectrum_fft(signal, append_len=args.append_len,
+                                                                            discont=np.pi)
+
+                    if cc is not None:
+                        acc_logmag += logmag
+                        acc_phase += phase
+                        count += cc
 
     pkl.dump({'count': count, 'acc_logmag': acc_logmag, 'acc_phase': acc_phase}, open(args.outfile, 'wb'))
 
