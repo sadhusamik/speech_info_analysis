@@ -55,23 +55,23 @@ def compute_modulations(args):
     if args.append_time is not None:
         wavfile = np.zeros(1)
         time = 0
-        time_limit =  args.append_time
+        time_limit = args.append_time
         time_limit = time_limit * 60
-
+        count = 0
 
     # Feature extraction
     if args.segment_file is None:
         with ReadHelper('scp:' + args.scp) as reader:
             for key, (rate, signal) in reader:
 
-                print('%s: Computing Features for file: %s' % (sys.argv[0], key))
-                sys.stdout.flush()
-
                 if args.append_time is not None:
                     if time <= time_limit:
                         wavfile = np.concatenate([wavfile, signal])
                         time += len(signal) / args.srate
                     else:
+                        count += 1
+                        print('%s: Computing Features appended speech file number: %d' % (sys.argv[0], count))
+                        sys.stdout.flush()
                         # add reverberation
                         if add_reverb is not None:
                             L = wavfile.shape[0]
@@ -93,6 +93,8 @@ def compute_modulations(args):
                         wavfile = np.zeros(1)
                         time = 0
                 else:
+                    print('%s: Computing Features for file: %s' % (sys.argv[0], key))
+                    sys.stdout.flush()
                     # add reverberation
                     if add_reverb is not None:
                         L = signal.shape[0]
@@ -114,14 +116,14 @@ def compute_modulations(args):
         with ReadHelper('scp:' + args.scp, segments=args.segment_file) as reader:
             for key, (rate, signal) in reader:
 
-                print('%s: Computing Features for file: %s' % (sys.argv[0], key))
-                sys.stdout.flush()
-
                 if args.append_time is not None:
                     if time <= time_limit:
                         wavfile = np.concatenate([wavfile, signal])
                         time += len(signal) / args.srate
                     else:
+                        count += 1
+                        print('%s: Computing Features appended speech file number: %d' % (sys.argv[0], count))
+                        sys.stdout.flush()
                         # add reverberation
                         if add_reverb is not None:
                             L = wavfile.shape[0]
@@ -143,6 +145,8 @@ def compute_modulations(args):
                         wavfile = np.zeros(1)
                         time = 0
                 else:
+                    print('%s: Computing Features for file: %s' % (sys.argv[0], key))
+                    sys.stdout.flush()
                     # add reverberation
                     if add_reverb is not None:
                         L = signal.shape[0]
