@@ -70,14 +70,15 @@ def compute_modulations(args):
                         time += len(signal) / args.srate
                     else:
                         county += 1
-                        print('%s: Computing Features appended speech file number: %d' % (sys.argv[0], county))
+
                         sys.stdout.flush()
                         # add reverberation
                         if add_reverb is not None:
                             L = wavfile.shape[0]
                             wavfile, idx_shift = addReverb_nodistortion(wavfile, rir)
                             wavfile = wavfile[0:L]
-
+                        print('%s: Computing Features appended speech file number: %d, duration: %f seconds' % (
+                        sys.argv[0], county, wavfile.shape[0] / 16000))
                         if args.use_frames:
                             cc, logmag, phase = feat_model.acc_log_spectrum_fft_frames(wavfile,
                                                                                        append_len=args.append_len,
@@ -122,14 +123,14 @@ def compute_modulations(args):
                         time += len(signal) / args.srate
                     else:
                         county += 1
-                        print('%s: Computing Features appended speech file number: %d' % (sys.argv[0], county))
                         sys.stdout.flush()
                         # add reverberation
                         if add_reverb is not None:
                             L = wavfile.shape[0]
                             wavfile, idx_shift = addReverb_nodistortion(wavfile, rir)
                             wavfile = wavfile[0:L]
-
+                        print('%s: Computing Features appended speech file number: %d, duration: %f seconds' % (
+                            sys.argv[0], county, wavfile.shape[0] / 16000))
                         if args.use_frames:
                             cc, logmag, phase = feat_model.acc_log_spectrum_fft_frames(wavfile,
                                                                                        append_len=args.append_len,
