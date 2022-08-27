@@ -63,21 +63,21 @@ def compute_modulations(args):
     if args.segment_file is None:
         with ReadHelper('scp:' + args.scp) as reader:
             for key, (rate, signal) in reader:
-
                 if args.append_time is not None:
                     if time <= time_limit:
-                        L = signal.shape[0]
-                        if add_reverb is not None:
-                            signal, idx_shift = addReverb_nodistortion(signal, rir)
-                            signal = signal[0:L]
+                        wavfile = np.concatenate([wavfile, np.zeros(int(args.fduration * args.srate))])
                         wavfile = np.concatenate([wavfile, signal])
-                        time += L / args.srate
+                        time += signal.shape[0] / args.srate
                     else:
                         county += 1
-                        sys.stdout.flush()
                         # add reverberation
+                        if add_reverb is not None:
+                            L = wavfile.shape[0]
+                            wavfile, idx_shift = addReverb_nodistortion(wavfile, rir)
+                            wavfile = wavfile[0:L]
                         print('%s: Computing Features appended speech file number: %d, duration: %f seconds' % (
-                        sys.argv[0], county, wavfile.shape[0] / 16000))
+                            sys.argv[0], county, wavfile.shape[0] / 16000))
+                        sys.stdout.flush()
                         if args.use_frames:
                             cc, logmag, phase = feat_model.acc_log_spectrum_fft_frames(wavfile,
                                                                                        append_len=args.append_len,
@@ -118,16 +118,17 @@ def compute_modulations(args):
 
                 if args.append_time is not None:
                     if time <= time_limit:
-                        L = signal.shape[0]
-                        if add_reverb is not None:
-                            signal, idx_shift = addReverb_nodistortion(signal, rir)
-                            signal = signal[0:L]
+                        wavfile = np.concatenate([wavfile, np.zeros(int(args.fduration * args.srate))])
                         wavfile = np.concatenate([wavfile, signal])
-                        time += L / args.srate
+                        time += signal.shape[0] / args.srate
                     else:
                         county += 1
                         sys.stdout.flush()
                         # add reverberation
+                        L = wavfile.shape[0]
+                        if add_reverb is not None:
+                            wavfile, idx_shift = addReverb_nodistortion(wavfile, rir)
+                            wavfile = wavfile[0:L]
                         print('%s: Computing Features appended speech file number: %d, duration: %f seconds' % (
                             sys.argv[0], county, wavfile.shape[0] / 16000))
                         if args.use_frames:
