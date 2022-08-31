@@ -65,7 +65,7 @@ def compute_modulations(args):
             for key, (rate, signal) in reader:
                 if args.append_time is not None:
                     if time <= time_limit:
-                        wavfile = np.concatenate([wavfile, np.zeros(int(args.fduration * args.srate/2))])
+                        wavfile = np.concatenate([wavfile, np.zeros(int(args.fduration * args.srate/4))])
                         wavfile = np.concatenate([wavfile, signal])
                         time += signal.shape[0] / args.srate
                     else:
@@ -118,7 +118,7 @@ def compute_modulations(args):
 
                 if args.append_time is not None:
                     if time <= time_limit:
-                        wavfile = np.concatenate([wavfile, np.zeros(int(args.fduration * args.srate/2))])
+                        wavfile = np.concatenate([wavfile, np.zeros(int(args.fduration * args.srate/4))])
                         wavfile = np.concatenate([wavfile, signal])
                         time += signal.shape[0] / args.srate
                     else:
